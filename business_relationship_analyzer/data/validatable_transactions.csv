@@ -1,0 +1,11 @@
+Originator_Name,Originator_SIC,Beneficiary_Name,Beneficiary_SIC,Amount,Currency,Transaction ID
+MediServices,3312,SafeSolutions,7311,106602.87,INR,TXN315896
+SafeCorp,2610,PrimeCorp,2610,337273.71,EUR,TXN826770
+ByteServices,111,QuantumVentures,2511,230967.51,INR,TXN269102
+NovaIndustries,2011,SafeVentures,2011,262442.0,USD,TXN614650
+SafeSystems,2610,PrimeLLC,2610,28012.09,EUR,TXN420407
+NovaGroup,1310,NovaGlobal,8121,224739.65,INR,TXN852394
+ByteSolutions,8610,MediIndustries,2610,405997.88,EUR,TXN596829
+QuantumServices,1101,NovaIndustries,8610,267901.91,EUR,TXN771454
+QuantumVentures,2511,UrbanLLC,2511,131671.39,USD,TXN771137
+SafeSolutions,7311,ByteGlobal,7022,257722.27,INR,TXN243277
