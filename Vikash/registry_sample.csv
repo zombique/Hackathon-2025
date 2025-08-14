@@ -1,0 +1,501 @@
+company_id,company_name,country,SIC_code,SIC_desc,NACE_code
+4fb8575a-1c6d-43ec-a738-7399e2b7d09c,"Ortiz, Williams and Smith",Tokelau,3020,Manufacture of railway locomotives,C30
+06a37225-4205-4c3c-bbe8-d6dc52507668,"Brown, Cooke and Webster",Syrian Arab Republic,8622,Specialist medical practice activities,Q86
+77e1ec10-4f7e-4aef-865a-2212a8d271ea,Mullins Inc,Palau,8622,Specialist medical practice activities,Q86
+7448a02e-98f6-45c8-ab9d-07f0e0b6aba1,"Pham, Watson and Jackson",Armenia,3511,Electric power generation,D35
+6f1f367d-25a8-46e6-809b-a188a56ef037,Burns-Russell,Poland,3511,Electric power generation,D35
+4a0d98cd-0b4c-4e7f-ad39-c2fb0aaf44e6,Hoffman-Brown,Andorra,6419,Other monetary intermediation,K64
+af2c6a10-ce22-40ed-a09a-da4ae2dfa18d,"Madden, White and Ross",Serbia,4711,Retail sale in non-specialized stores,G47
+e5d1aaf1-9519-4b8b-a716-b5b1c02c3319,"Leonard, Perez and Stevens",Vietnam,6419,Other monetary intermediation,K64
+f01688a2-e318-4117-8d01-326bcd1753a9,Cox-Crawford,Portugal,4711,Retail sale in non-specialized stores,G47
+16761569-2e5d-4025-87c0-23288ed11eb3,"Brown, West and Tyler",Singapore,3020,Manufacture of railway locomotives,C30
+467c3dbc-e64e-4c72-ba15-7b8b5da447b1,May Group,Iceland,8622,Specialist medical practice activities,Q86
+8b7f5966-ef50-4cd7-bfdb-4c8787c0ebdb,"Miller, Dixon and Barker",United Arab Emirates,6419,Other monetary intermediation,K64
+f16bd544-9db9-43c3-a878-d91ee8e46131,"Bennett, Castillo and Miller",Latvia,4711,Retail sale in non-specialized stores,G47
+d0193a55-7135-4f80-a772-016b524aa1d8,"Martin, Turner and Pena",Peru,3511,Electric power generation,D35
+89f483ea-8ebb-4d58-8120-991e1f4daae3,Anderson-Baker,Gambia,3511,Electric power generation,D35
+b4ec8104-0869-47a7-97a4-bc43334888c5,"May, Mills and Anderson",Slovenia,3020,Manufacture of railway locomotives,C30
+58c7003c-949f-42d2-ba31-2dc120004dc2,Smith-Norton,Bulgaria,4920,Freight transport by road,H49
+c9998add-3b51-4ec2-bd85-174cb0b859ac,Harrison PLC,Cambodia,3020,Manufacture of railway locomotives,C30
+eac97954-74d6-4494-9bec-3bdee78955c0,Bradley-Baird,French Guiana,4711,Retail sale in non-specialized stores,G47
+a059f89c-1723-4858-abd5-68b048cc0c8b,Dennis Inc,Korea,6419,Other monetary intermediation,K64
+af9095c8-b0b5-4825-94f4-7cd04a2d2d64,Harris PLC,Lebanon,8622,Specialist medical practice activities,Q86
+c0c9959b-8ccc-45e0-9501-6a53d3dbef77,"Torres, Romero and Bell",Isle of Man,4711,Retail sale in non-specialized stores,G47
+e6586bd9-b7cd-4b00-af9f-3d2498db8f85,"Garza, Glass and Evans",Mozambique,8622,Specialist medical practice activities,Q86
+11569938-322f-4e4a-a310-61c1cdd8ec8d,Stanton Ltd,Chile,8622,Specialist medical practice activities,Q86
+744531fb-7787-4ddc-ac1a-a2fa8ffbd483,"Hale, Boone and Castro",Wallis and Futuna,3511,Electric power generation,D35
+00696ddc-815e-423f-8339-49a70d973430,"Benjamin, Moore and Palmer",Chad,8622,Specialist medical practice activities,Q86
+6df81734-7132-4fe0-b462-90a49110070d,Shea LLC,Macedonia,0111,Crop and animal production,A01
+cfd484b2-6946-4f49-90ad-93ca85d33fb5,"Cole, Hartman and Dixon",Martinique,8622,Specialist medical practice activities,Q86
+a4f9d7e4-27eb-43a6-9701-c3632c3d8806,"Reese, Mcbride and Bell",Albania,3511,Electric power generation,D35
+80daa339-9bd3-4077-a6c7-aa0c88cf31be,Berg-Watson,Malta,0111,Crop and animal production,A01
+0f2c6777-f5b4-4bac-b053-3a15fbd961a8,Hickman-Santos,Montserrat,8622,Specialist medical practice activities,Q86
+a574f008-1561-4501-8de6-57b32393460c,Flowers LLC,Antigua and Barbuda,0111,Crop and animal production,A01
+461e3537-f651-4e83-8488-b00bee5c9d7d,Frank-Sanders,Equatorial Guinea,6201,Computer programming activities,J62
+b7e6df63-8726-4dd0-8031-fa717e46cbdf,"Campos, Martinez and Mitchell",Cape Verde,4920,Freight transport by road,H49
+8028fdc6-a338-4239-8293-f67e3e0373fa,Smith Group,Lesotho,6419,Other monetary intermediation,K64
+fd068839-d18c-41ad-94db-80f24881fa57,Schmidt Group,Myanmar,0111,Crop and animal production,A01
+07e7464c-f8b8-4d39-bda3-b436e7cff9ea,"Padilla, James and Hayes",Samoa,3511,Electric power generation,D35
+924fe2c8-aab9-4dd5-883d-732628d64df8,"Martinez, Peters and Rodriguez",Saint Helena,6419,Other monetary intermediation,K64
+ef8d3f1d-e028-4acc-ac16-b86d1e0c1486,Baker-Coleman,Zambia,4920,Freight transport by road,H49
+aaa53bc7-4201-4073-963f-db9576f3651d,"Fleming, Dunn and Allison",Guinea-Bissau,4920,Freight transport by road,H49
+ddce04e0-0309-4cbb-ae8a-e196c28a3c06,Valdez-Schroeder,Saint Helena,3020,Manufacture of railway locomotives,C30
+8edb72c4-e121-4c50-8bb1-00ccd6398c86,Duke LLC,Croatia,6419,Other monetary intermediation,K64
+897d7e24-50bb-43c1-af1d-ef0364ecb3f8,"Phillips, Hess and Hardy",Brazil,3511,Electric power generation,D35
+e394f0eb-2f96-4d05-b0a7-e744929bcca4,Gonzalez PLC,Svalbard & Jan Mayen Islands,4920,Freight transport by road,H49
+db943c2a-33fd-4cba-9674-923ed67a3aea,Jordan Inc,Dominican Republic,6201,Computer programming activities,J62
+be698f37-cb70-4f0e-a75d-5ef69dccf61e,Conner Group,United Kingdom,8622,Specialist medical practice activities,Q86
+e8862713-3d89-4944-a879-cc80be98bdfe,Brown and Sons,Fiji,4711,Retail sale in non-specialized stores,G47
+243fe926-c5ee-410e-8efb-1c993d87d6c6,Powell-Perez,Barbados,3020,Manufacture of railway locomotives,C30
+21fd46ba-7446-47bc-bb1a-8ac4b21da893,Cole-Calderon,Ecuador,3020,Manufacture of railway locomotives,C30
+4f76abb3-f574-41c8-952d-4514c2545bbc,"Hobbs, Davis and Cunningham",Guam,3020,Manufacture of railway locomotives,C30
+09259772-a7a7-4eb3-81cc-3df0d64dfa74,Romero-Gordon,Singapore,6201,Computer programming activities,J62
+73afe3dc-6e64-4aa4-a9dc-2e2a678d9997,Anderson Group,Holy See (Vatican City State),0111,Crop and animal production,A01
+a715b7f7-29a6-4604-8d5d-4e0e7b0a00b1,Newman-Price,Kazakhstan,3511,Electric power generation,D35
+bab9e145-1b41-4800-8031-5e49ce15f320,"Huber, Taylor and Hancock",Georgia,4920,Freight transport by road,H49
+48cf6505-a5a5-45b9-9929-49306741ad43,Mayer-Arnold,Poland,4920,Freight transport by road,H49
+41d9f7df-1dc4-4968-b7f9-52a3794c43f8,"King, Roberts and Calhoun",Singapore,3511,Electric power generation,D35
+1b3ec59a-a810-45a0-85a2-d56e326ff504,"Arellano, Weber and Bradford",Eritrea,3020,Manufacture of railway locomotives,C30
+40d5df0e-e282-4fcd-8b9d-5bde7375653e,"Espinoza, Gordon and Herrera",United States of America,4711,Retail sale in non-specialized stores,G47
+61d994f9-8007-4807-bf41-e5bfd8e0bb0c,Rose-Gould,Saudi Arabia,6201,Computer programming activities,J62
+0a481815-0aa9-4121-b0c6-cd0729d79088,Wyatt-Wilson,Equatorial Guinea,6419,Other monetary intermediation,K64
+328faf44-0b79-4f01-b9f4-202f43b6fedb,Rogers Group,Fiji,3511,Electric power generation,D35
+211e47db-9040-4013-8341-6ad8e1a80e2d,Rodriguez-Li,Paraguay,6201,Computer programming activities,J62
+d4eebc27-fdfc-4ef3-aa1d-b22d4bc39feb,Harris Ltd,Djibouti,4920,Freight transport by road,H49
+9795cf30-b7ec-4932-8cdd-ff194f3881f3,Brown-Williams,Syrian Arab Republic,3511,Electric power generation,D35
+a816e5ef-eaf2-43a2-b687-0d2b01adde2e,Manning-Rojas,Monaco,6419,Other monetary intermediation,K64
+934f52bb-e7e7-4c58-85cb-b3e904b30cd8,Jenkins-Miller,Kazakhstan,0111,Crop and animal production,A01
+dd2dacc7-9cdc-4e1d-9329-02524b099524,"Fletcher, Casey and Barber",Svalbard & Jan Mayen Islands,8622,Specialist medical practice activities,Q86
+65ece45d-bf6a-4788-beae-b48ae70db171,Dixon-Johnson,Dominica,4711,Retail sale in non-specialized stores,G47
+50cad58b-1163-4e1f-82ed-5a4e619e28cb,Lewis PLC,Gibraltar,4920,Freight transport by road,H49
+a11f6f95-8983-424c-bea7-b86e3d1aad91,"Proctor, Stevens and Collier",Venezuela,3511,Electric power generation,D35
+6b3b4b28-3bb2-465d-b175-6010fcc3b295,Adams-Jones,Seychelles,0111,Crop and animal production,A01
+d5210d4a-5bf7-4c48-b660-694a40246704,"Delgado, Atkinson and Hudson",Micronesia,3511,Electric power generation,D35
+72c11e5f-ac89-4242-9fa9-45c7f4e6ef52,"Douglas, Vaughn and Gomez",Gambia,3020,Manufacture of railway locomotives,C30
+5c9bf8a6-994c-4691-9720-ebf13b514173,Petty-Castillo,Croatia,3511,Electric power generation,D35
+c7bf84ea-9500-443d-b7a5-32ce483ac1e0,Scott Inc,Wallis and Futuna,6201,Computer programming activities,J62
+9c482720-b865-426e-a3b0-81e8bc6b50a2,"Carter, Wagner and Fletcher",Iraq,4920,Freight transport by road,H49
+0c595477-0b7b-43ed-b613-3a57dc1c19ac,Williams and Sons,Lesotho,6419,Other monetary intermediation,K64
+814473a0-f338-47e9-9750-0ac428b2ec04,Flores-Walker,Kenya,4920,Freight transport by road,H49
+f2c7c7b2-6db5-4120-bc24-9370296e6961,Goodman PLC,Kazakhstan,8622,Specialist medical practice activities,Q86
+b2711267-bfdb-44f6-b4f4-fbd83bef1dda,Payne-Hunter,Haiti,6201,Computer programming activities,J62
+e790fdcd-94a0-44c7-a4b0-3dbb19ce5038,Nguyen Group,Mozambique,3020,Manufacture of railway locomotives,C30
+aa04b49b-a19c-4148-9aed-10ed4a35f34d,Hull-King,Slovenia,3020,Manufacture of railway locomotives,C30
+c359aef0-f71d-4c68-ba7f-bb2946b560d8,Walsh Ltd,Barbados,6201,Computer programming activities,J62
+17d5cf72-5926-4d7f-996c-03aabd8b533c,Martin-Harvey,Jordan,4711,Retail sale in non-specialized stores,G47
+c2ba02ab-bfac-4ba9-a0eb-185e779cbb2f,"Wong, Williams and Spencer",Kuwait,6201,Computer programming activities,J62
+5b444792-02f2-460f-9c6e-5264e555699f,"Hansen, Page and Mason",Uzbekistan,0111,Crop and animal production,A01
+35ac9429-fb18-4143-bccf-3dce9efd6d9a,"Anderson, Lee and Chavez",Netherlands Antilles,8622,Specialist medical practice activities,Q86
+90998cd3-a221-4e91-acb8-11bc27a0e112,"Roberts, Steele and Dougherty",Macao,4711,Retail sale in non-specialized stores,G47
+ed63cacc-d82f-4519-b5f2-bfc358405036,Rodriguez Ltd,Philippines,6419,Other monetary intermediation,K64
+11bd256d-b72e-404a-9bf0-5345c7b5f6aa,Swanson PLC,Chad,6201,Computer programming activities,J62
+e131c1d7-7767-4b64-b393-183f6cee76cb,"Williams, Castaneda and Lawrence",Cocos (Keeling) Islands,4711,Retail sale in non-specialized stores,G47
+a0cfd341-0485-4195-9ae2-c26fb2870301,Rhodes-Woods,Tokelau,0111,Crop and animal production,A01
+3159a440-ce64-496e-8f18-9ebf008b945b,Oconnor Group,Ecuador,8622,Specialist medical practice activities,Q86
+f131905c-4bf0-4897-b0ae-72f7e7b1bdef,Ward and Sons,Taiwan,6201,Computer programming activities,J62
+9e949288-f99b-44d3-b380-489476e69ede,Greene-Beard,Guinea-Bissau,3020,Manufacture of railway locomotives,C30
+6e1d945e-b26e-4451-8aad-c371fe05d449,"Diaz, Ortega and Roman",Cayman Islands,4920,Freight transport by road,H49
+533542cb-aa77-41d9-b01c-3673d6aae832,"Murphy, Vazquez and Chaney",Congo,0111,Crop and animal production,A01
+fcd1932d-0a9c-488f-89b5-cdb7bf37c303,Green Inc,Northern Mariana Islands,0111,Crop and animal production,A01
+8b39f65a-bb29-4068-83c6-64847a6cadcd,Jordan Inc,Congo,6419,Other monetary intermediation,K64
+8865a944-c58d-44d7-9d5b-4a2fc5117ad4,Golden-Fry,Solomon Islands,3511,Electric power generation,D35
+3657cca2-3ce4-47f7-8bd3-44749981d6d8,"Oliver, Martinez and Brown",Fiji,4711,Retail sale in non-specialized stores,G47
+75c3fe7c-cc60-4bc7-b880-fe07c83f36a7,Arellano Ltd,Marshall Islands,4711,Retail sale in non-specialized stores,G47
+750c0dd8-9537-4b40-b2e1-44fab526fedc,Barry-Charles,Nicaragua,4920,Freight transport by road,H49
+6bfb8887-0d4c-4ddc-82d1-66d2e27a581d,Madden-Keller,Gabon,3020,Manufacture of railway locomotives,C30
+6e5eb167-a231-410a-9948-66463a575b6c,"Willis, Snyder and Vega",Yemen,0111,Crop and animal production,A01
+9b5d0447-720c-461a-8a79-fc7b8c82f3a2,"Scott, Maldonado and Morrow",Lithuania,3020,Manufacture of railway locomotives,C30
+fd7d65a5-b986-4f61-a22d-766c1e021983,Miles Group,Saint Barthelemy,6419,Other monetary intermediation,K64
+08a00ea2-edb8-4700-b35f-6bb8dd87939e,Fisher and Sons,San Marino,3020,Manufacture of railway locomotives,C30
+4acea076-9e55-4c47-ab97-8e2cffe28631,Rowe PLC,Anguilla,3020,Manufacture of railway locomotives,C30
+502da46f-f6f4-4173-b44b-6edbb03460bc,Curtis-Hunter,Costa Rica,6201,Computer programming activities,J62
+10290f6a-d6d2-40f1-a4f9-06c11d126c57,Fox Ltd,Madagascar,8622,Specialist medical practice activities,Q86
+19ad70ea-bee2-4bb7-ab18-b883a79c36c4,"Morton, Ford and Myers",Macedonia,0111,Crop and animal production,A01
+a2edec7d-5d61-4127-b6fb-7e0801378145,Young PLC,Georgia,6419,Other monetary intermediation,K64
+9209cd6d-35b0-42ee-815a-c839d9944312,Cox-Fleming,Antarctica (the territory South of 60 deg S),3020,Manufacture of railway locomotives,C30
+2d864637-d093-4139-86e6-0e83d7b924f7,"Wilcox, Thompson and Williams",Nigeria,6419,Other monetary intermediation,K64
+ed321898-8764-4a20-bf09-8c48617b2a45,Allen-Miller,Tuvalu,6419,Other monetary intermediation,K64
+7b6add4f-a223-4b73-af90-44d517e4d5d8,"Fleming, Jones and Fox",Chad,0111,Crop and animal production,A01
+97b28831-cad1-474f-95ba-730f214b48e9,"Edwards, Reid and Dickerson",Bhutan,4711,Retail sale in non-specialized stores,G47
+78133c09-7521-4a74-a43b-d824be422a2b,"Deleon, Lewis and Myers",Saint Helena,3511,Electric power generation,D35
+96a1bc0e-656f-4709-8bed-2da4b5f9cf71,Brock and Sons,Israel,8622,Specialist medical practice activities,Q86
+145b3f5c-33d2-4ac4-9d3c-0bbe65bb28a7,Tucker-Chapman,Belarus,0111,Crop and animal production,A01
+2aaa15ff-68fa-471e-8a46-ced3e848e1c7,Davis LLC,Andorra,4920,Freight transport by road,H49
+c76e2a06-47a8-4487-8053-c4300d933c11,"Parker, Johnson and Maldonado",Latvia,6201,Computer programming activities,J62
+ec3b4116-d0de-4e70-9264-9836c263ae8e,"Jennings, Hendricks and Contreras",Liechtenstein,3020,Manufacture of railway locomotives,C30
+a2b9184c-4435-4884-9e1e-a02eec943d73,Williams PLC,Netherlands,4711,Retail sale in non-specialized stores,G47
+98073cea-d22b-413b-bd16-9e4c3dc6d0c2,Brewer LLC,Singapore,6201,Computer programming activities,J62
+12549c06-0caf-4599-81df-2f1e2b71523f,Jefferson-Warren,Jersey,3020,Manufacture of railway locomotives,C30
+1cab1b9c-1d49-47b9-8db6-6f55ecc4dbf0,Neal-Richardson,Myanmar,8622,Specialist medical practice activities,Q86
+505cc94a-f15a-41c9-bd90-fa2cd9968508,Paul-King,Uganda,4711,Retail sale in non-specialized stores,G47
+2d6ff73f-a4d5-4973-9467-50d51199143f,"Barnes, Knight and Gibson",Cameroon,3511,Electric power generation,D35
+f409b17a-f909-4177-9060-767438d50002,Allen Group,Rwanda,3020,Manufacture of railway locomotives,C30
+51e688d9-c114-45e1-9147-58f2f7c9b8f2,"Newton, Perez and Bennett",Papua New Guinea,6419,Other monetary intermediation,K64
+e85eac14-221c-4c38-8724-7c91b864c557,Brown and Sons,Japan,0111,Crop and animal production,A01
+cf3f40f2-760e-4e54-900c-8e65b9cdc9c9,"Hernandez, Martinez and Escobar",Taiwan,6419,Other monetary intermediation,K64
+fa3918c8-762c-486e-a502-c64ced406ee6,Oneal and Sons,Niger,0111,Crop and animal production,A01
+169e00d2-16bd-4391-9dcd-dee03b281814,Bass-Bryan,Bahamas,4711,Retail sale in non-specialized stores,G47
+ced0d35a-56f3-420e-9e48-5e177ffd3421,Brown-Moore,Ghana,6201,Computer programming activities,J62
+f2942645-0b15-44d0-b1d7-f0f505f7bf9c,Gross-Hunt,Singapore,6201,Computer programming activities,J62
+4fc5da8d-c042-499c-82ab-9599538daf16,Parsons-Edwards,New Caledonia,6201,Computer programming activities,J62
+65519edb-365c-4820-ab00-43800c8e2c6e,Diaz-Braun,Saint Lucia,8622,Specialist medical practice activities,Q86
+fab19304-3e09-47d4-b7cc-796ad8798075,Simpson-Robinson,Saudi Arabia,3020,Manufacture of railway locomotives,C30
+72804e60-f2c1-4831-9e2b-7b87b48d539a,Harris-Howell,Saint Kitts and Nevis,6201,Computer programming activities,J62
+c601ba4b-ce14-46a5-8254-a211c1cf08fb,"Ayers, Dalton and Curtis",Hungary,4711,Retail sale in non-specialized stores,G47
+17d60e1f-b6b8-48ea-9e6e-523e8684d553,"Vincent, Matthews and Martinez",Yemen,4920,Freight transport by road,H49
+520ffc8c-86bd-4b5b-9a4f-6354e6635445,Miller PLC,Korea,6419,Other monetary intermediation,K64
+8d403975-dd29-4f01-9120-4ca9397204ed,"Brown, Lynch and Johnson",Ghana,0111,Crop and animal production,A01
+d233b3ad-07c0-4148-96b5-2572ad280b23,Martin Inc,Moldova,4920,Freight transport by road,H49
+51ce7f29-84f4-445a-a1fb-603d98cc97f7,Warner and Sons,Andorra,6201,Computer programming activities,J62
+fafa4f4c-ccd8-488a-8d9b-d1f316827ad0,Murphy-Green,Israel,3511,Electric power generation,D35
+9b6f5164-16a3-47e7-84e1-ad9e9e165ebb,"Thompson, Gonzalez and Blanchard",United Kingdom,6419,Other monetary intermediation,K64
+48717c0e-3f4d-4bab-9202-805f87675363,Taylor and Sons,Suriname,3020,Manufacture of railway locomotives,C30
+d7cd0564-0ef8-4725-9949-737f7fe8f171,Hawkins-Hernandez,Bhutan,6201,Computer programming activities,J62
+5112c197-dbf4-46e9-9cf0-84070aba2b5e,Browning and Sons,Heard Island and McDonald Islands,4920,Freight transport by road,H49
+c92d3f20-6156-4ffc-97a8-8eab08fbaf95,Wilson and Sons,Brazil,4920,Freight transport by road,H49
+2547b3c5-1ed6-4144-b8bf-c1b03a984002,Carney-Hopkins,Anguilla,4711,Retail sale in non-specialized stores,G47
+5edd787a-defa-41a5-99b0-90e4fb52063f,Hawkins PLC,Antarctica (the territory South of 60 deg S),3511,Electric power generation,D35
+2f901492-4663-4877-b3ab-c2038fecec47,Long-Patterson,Gambia,6201,Computer programming activities,J62
+ee21f968-5761-47cd-ab1c-21d1c7491db9,"Carr, Jordan and Browning",Anguilla,3020,Manufacture of railway locomotives,C30
+0a96e090-fc92-4b07-85dc-76f0b5db9638,Green-Bullock,Slovenia,3511,Electric power generation,D35
+b6eb3cc9-6a87-4006-b78a-d531dcfcc229,"Guzman, Russell and Harris",Malaysia,4920,Freight transport by road,H49
+bbe82a98-ce24-42b4-ad07-f2c4f04925db,Chambers Ltd,Cape Verde,4711,Retail sale in non-specialized stores,G47
+49a34306-9846-4ec1-af78-2165d6f06d68,Sherman Ltd,Tokelau,4711,Retail sale in non-specialized stores,G47
+59464305-79ef-46cb-a050-b95acea3ad52,"Cochran, Hooper and Shea",Dominica,6201,Computer programming activities,J62
+b7d5bdf1-30cf-4328-848e-1ead363b469c,Fisher-Miller,Namibia,6419,Other monetary intermediation,K64
+f08d4f49-b94a-40ec-96b5-4fc9f45e1eaf,Carter Ltd,Liberia,8622,Specialist medical practice activities,Q86
+747ec5e6-1b3a-4d2f-a1ed-a206433eff49,Carrillo Ltd,Equatorial Guinea,8622,Specialist medical practice activities,Q86
+d499eaff-5e35-4894-8758-6ab07a390ee3,Lopez-Miller,Burkina Faso,6419,Other monetary intermediation,K64
+08084158-c0ec-4c2c-9e50-05506b160432,Fritz Group,Cayman Islands,6419,Other monetary intermediation,K64
+d550c2b5-3690-40a2-bbbf-326dd83cf250,Nguyen-Brooks,Nicaragua,6201,Computer programming activities,J62
+8d7eb1bc-c2b6-4bf5-b4ac-a150b308df87,Dixon Group,Grenada,6201,Computer programming activities,J62
+beb21417-75b1-4a71-96ac-2e5b4b332ed3,Schneider-Miller,Saint Lucia,4920,Freight transport by road,H49
+e5dde10e-bd47-4981-8fca-03d67092ccef,"Rice, Vega and Garcia",France,8622,Specialist medical practice activities,Q86
+61b59bfd-74fd-4c27-9c27-f6d394cc183c,Williamson Inc,Madagascar,4920,Freight transport by road,H49
+9c374863-e9b2-44f9-9831-4f8ffce3ab2a,Mckenzie Inc,Iceland,4711,Retail sale in non-specialized stores,G47
+5e9ed88e-9988-4f6f-9805-76d469ab9b3e,"Smith, Taylor and Huff",Dominican Republic,8622,Specialist medical practice activities,Q86
+4e1ea5bc-2062-4988-aaad-e885ae5872f5,Brown-Fitzgerald,Solomon Islands,4711,Retail sale in non-specialized stores,G47
+5a333d0d-7217-4275-b436-75470caac30a,"Turner, Spencer and Riggs",Peru,3020,Manufacture of railway locomotives,C30
+27213fee-4a47-47e8-a14f-e70eaee3b60b,Robinson Inc,Tokelau,0111,Crop and animal production,A01
+cd864cd1-90ee-457c-a966-d943cdd0e1b8,"Suarez, Hogan and Moore",Belarus,3020,Manufacture of railway locomotives,C30
+85aa1f4f-32bb-4ea7-b8b0-9a43cb19f362,Wang-Hill,Zimbabwe,0111,Crop and animal production,A01
+e277d110-af04-4f05-aaa5-c6b750e4b981,"Miranda, Brown and Smith",El Salvador,3511,Electric power generation,D35
+23c9d301-8a61-4d97-9e74-2576e25d4d1b,"Stewart, Munoz and Martinez",Anguilla,4920,Freight transport by road,H49
+1c95ce8a-d14b-41f8-9096-d3d2e5fda417,"Stevens, Roach and Jones",Sweden,6419,Other monetary intermediation,K64
+1802ee96-016c-40b3-bbb7-be60a78266ff,Smith-Jones,Isle of Man,3020,Manufacture of railway locomotives,C30
+5108ab23-d79e-4d74-9f7a-c8e5c2495a36,Jackson-Terry,Samoa,4711,Retail sale in non-specialized stores,G47
+b82ec785-4eda-4e2b-a0fb-708c35e55824,Rivera Group,Bhutan,3020,Manufacture of railway locomotives,C30
+409d28cc-3999-4d95-91c2-8cf0837e5997,Martinez and Sons,Iran,6419,Other monetary intermediation,K64
+edbb9649-11be-4a4a-b24e-9f16922531a0,Hill-Moore,China,4920,Freight transport by road,H49
+43ae5413-cba4-4174-89ee-80686b67894f,Aguilar Ltd,Montserrat,3511,Electric power generation,D35
+47b63e94-8026-459c-b037-aac9b46b97e2,Castillo Ltd,Indonesia,0111,Crop and animal production,A01
+892a8660-97ab-436c-9c18-b3e03b5ff183,Young-Mckay,Puerto Rico,0111,Crop and animal production,A01
+7a945586-f975-4655-95bf-eedc059246c7,Soto Group,Antigua and Barbuda,6201,Computer programming activities,J62
+cb8f6b88-0064-4360-8fed-1d8d770d2e5a,Jones and Sons,Western Sahara,0111,Crop and animal production,A01
+0a271135-0f3c-4b51-89b7-b48a119acc51,Walls-Schmidt,Seychelles,0111,Crop and animal production,A01
+2723d630-d664-4cdb-a1dd-b1fded63bc26,Weaver-Miller,Sweden,3020,Manufacture of railway locomotives,C30
+3b7be063-351f-4585-84cb-1eb7c0779902,"Rodriguez, English and Miller",Guinea,4920,Freight transport by road,H49
+6e14d82b-f70f-4dda-90c1-b69f27a6b633,Davis Inc,Falkland Islands (Malvinas),4920,Freight transport by road,H49
+a04020fc-a0da-4fe7-81e2-f38e37aa6028,"Maxwell, Acosta and Martinez",Antigua and Barbuda,4711,Retail sale in non-specialized stores,G47
+a19369ea-58b8-4698-a5b8-db8de275af52,Stein-Ward,Mongolia,4920,Freight transport by road,H49
+5435176b-16d8-4010-a254-2000beb5944d,Garcia Inc,United Arab Emirates,4920,Freight transport by road,H49
+ae28afea-6a18-40cf-aa6f-a636722ab930,Arnold and Sons,Iceland,4711,Retail sale in non-specialized stores,G47
+763601ba-45e2-4b51-9deb-109f6e87ad70,Miller-Jensen,Botswana,0111,Crop and animal production,A01
+238bc2ac-92a6-4388-bd80-a99d90cb4e9d,Robinson LLC,Antigua and Barbuda,4920,Freight transport by road,H49
+8f7104d7-dcd7-4c3d-9693-f1f4783c6c4c,Wilson-Lewis,Colombia,4711,Retail sale in non-specialized stores,G47
+bd41a948-50ed-4f3a-aa13-57e932fad9e1,"Diaz, Washington and Moore",Sri Lanka,0111,Crop and animal production,A01
+8c519fa6-533d-4415-9b98-437d24b1a331,"Carter, Molina and Wagner",Finland,0111,Crop and animal production,A01
+b9539f73-619a-4372-8491-38efb60595e1,"Rowe, Alexander and Estes",France,0111,Crop and animal production,A01
+637536f5-1651-4ad0-a0ce-0e1d677e3e63,George PLC,Macedonia,0111,Crop and animal production,A01
+c2ebf88b-0704-4722-981b-73f557e0e1f8,Lester Group,Philippines,0111,Crop and animal production,A01
+8de6efc2-bca8-41ea-bb0d-f4286f09d5c9,"Taylor, Saunders and Johnson",Malaysia,6419,Other monetary intermediation,K64
+a902d3e4-20c0-4845-9880-2ef19f121d4a,"Burns, Hamilton and Young",Belize,3511,Electric power generation,D35
+5bbe4135-9cf9-4d18-a442-c707554dbf2b,Taylor Inc,Andorra,6201,Computer programming activities,J62
+652067e6-fb26-42b7-8ec5-e21f8c87e223,"Wood, Brown and West",Anguilla,6419,Other monetary intermediation,K64
+821aa725-691c-4306-89c9-03da6ce788a1,"Schmidt, Crawford and Roberts",Ethiopia,4920,Freight transport by road,H49
+32318993-3fc1-4cb4-a4e6-477d1f3f5dd9,Moses Group,Bahrain,4711,Retail sale in non-specialized stores,G47
+db6ce995-a4cc-4a59-8a1f-1660455a47bd,"Foster, Porter and Vasquez",Angola,3020,Manufacture of railway locomotives,C30
+2b5adbd1-5dee-464a-98f7-a1a1186fb699,Monroe-Harris,Gambia,3511,Electric power generation,D35
+03c37583-a369-4d03-abd9-9a389137281b,"Kelley, Summers and Harper",Mexico,8622,Specialist medical practice activities,Q86
+43963a7b-214a-4bc6-8197-1f723b4a8e66,Flores-Sullivan,Romania,4711,Retail sale in non-specialized stores,G47
+8ed74f5f-ab19-46d8-b023-8f1caacb845e,Schmidt Inc,French Southern Territories,4920,Freight transport by road,H49
+27e4a9eb-3381-4781-bc7d-3993e0e0eb1b,Gonzalez Inc,Armenia,6201,Computer programming activities,J62
+8cd2a824-5071-4f52-adea-099824714484,Reyes and Sons,Greece,3020,Manufacture of railway locomotives,C30
+1140483c-03d3-4360-864f-2b6141690802,Collins PLC,Equatorial Guinea,3020,Manufacture of railway locomotives,C30
+8053b680-e7d5-4e23-9dbd-35f05626a90b,"Smith, Lopez and Rodriguez",Algeria,4920,Freight transport by road,H49
+a1be7584-1c9b-417f-839b-20d9c8ba3c41,Alexander-Johnson,Jordan,6201,Computer programming activities,J62
+60db4f97-ff30-44c7-a192-b93c2a53f52d,Davis-Middleton,Holy See (Vatican City State),6419,Other monetary intermediation,K64
+dd71ee89-5b8b-4e72-8b2b-7d1ff25bba39,Thomas-Russell,Venezuela,6201,Computer programming activities,J62
+b66240af-351f-42ca-b918-f98141d70b52,Fox-Hill,Congo,6419,Other monetary intermediation,K64
+45ecf1a4-c6d3-4e5a-a2c7-d6e9067bf914,"Caldwell, Jackson and Gonzalez",Taiwan,4711,Retail sale in non-specialized stores,G47
+b1aa0ed6-86d1-4f34-a2d8-4f5805783027,Ruiz and Sons,Estonia,3020,Manufacture of railway locomotives,C30
+e6d9a4e6-77e0-40ec-a1f4-1fad0d2d76af,Garcia PLC,Australia,6201,Computer programming activities,J62
+3f81fd2f-5233-4d10-969a-fc18c94716c5,Hensley-Phillips,Djibouti,0111,Crop and animal production,A01
+f07b0eeb-6cb8-450c-9b61-04747a79c630,Williams-Jones,Oman,0111,Crop and animal production,A01
+26fa0c97-7238-42ad-a0b0-ee2f474c0363,"Wright, Wood and Yu",Marshall Islands,8622,Specialist medical practice activities,Q86
+ac836676-433b-46c3-accc-fad7ce30b1f8,Bowman Group,Jordan,3511,Electric power generation,D35
+5965196f-d59e-423a-b1c2-15a982ca726d,Clark PLC,Haiti,6419,Other monetary intermediation,K64
+dfbe678b-b883-4f8e-9736-daf5e87a484f,Walker-Galloway,Cocos (Keeling) Islands,3020,Manufacture of railway locomotives,C30
+18427024-9179-4f1e-9f53-32b762c2f056,Smith LLC,Switzerland,3020,Manufacture of railway locomotives,C30
+4f51aee1-464f-4ce0-848d-4fbe6974e900,Bishop-Graham,Aruba,4711,Retail sale in non-specialized stores,G47
+6946cb88-fb01-4cea-b98d-a30c1b73a55c,"Pacheco, Mejia and Thompson",Korea,3511,Electric power generation,D35
+e0a19709-d98d-4d25-9a77-0090629adb12,Hicks-Watts,Namibia,0111,Crop and animal production,A01
+33e5ce26-a065-4681-9572-cb120e1a2927,Norris-Myers,Sri Lanka,6419,Other monetary intermediation,K64
+cfb2261f-f837-429c-a5d3-ea389d24327e,Morris-Murphy,Cyprus,6201,Computer programming activities,J62
+f69ba8e3-fbde-4077-a68e-ed039ab75cf1,Fisher PLC,Montenegro,4711,Retail sale in non-specialized stores,G47
+f074de2e-f0ca-43c3-8487-22378f84b3f7,Hernandez Group,San Marino,6419,Other monetary intermediation,K64
+5dbe9898-17bc-4748-99ea-f335b4ba9837,"Haynes, Ferguson and Norman",Brunei Darussalam,3020,Manufacture of railway locomotives,C30
+1aaa5704-6839-41e6-ab4a-da132fa7eb46,Hernandez-Anderson,South Georgia and the South Sandwich Islands,6201,Computer programming activities,J62
+f969ebcb-3b2a-4587-9b78-c47fc0757bdd,"Thompson, Smith and Jackson",Bulgaria,8622,Specialist medical practice activities,Q86
+e2614be7-2f09-4ef7-a3b6-47290875e715,"Hayes, Beck and Wilson",Luxembourg,4711,Retail sale in non-specialized stores,G47
+93add34d-585f-4f72-9f81-ed1b3e02f75c,"Graham, Alvarado and Berg",Angola,6201,Computer programming activities,J62
+4cc2fad3-bedb-4462-a9a8-3a46bcd3e739,"Holloway, Carter and Sosa",Turkey,3511,Electric power generation,D35
+001c4474-1baa-4385-861a-84947ad3c042,"Bray, Schneider and Bolton",Belgium,8622,Specialist medical practice activities,Q86
+68eaee2a-1ef5-412c-b058-ab7ecf0ee60a,Alvarado-Sullivan,San Marino,3511,Electric power generation,D35
+c4aec3bf-f2f0-4f98-b95b-3ce6f5e58ea0,Richardson-Davis,Mayotte,4920,Freight transport by road,H49
+9de40444-e734-46cb-b0f2-0b52035dc3ff,"Holt, Galvan and King",Seychelles,0111,Crop and animal production,A01
+c56505b5-74f0-40a3-b207-c894512e8f9e,"Martinez, Mahoney and Ellis",Guam,6419,Other monetary intermediation,K64
+7fb2e792-22ee-4eaf-bc89-5f7ad0c23bac,"Webb, Dawson and Harris",Saudi Arabia,4920,Freight transport by road,H49
+fad5644f-5963-4c3c-b66e-deb66f7a4d16,Stevenson-Keith,Aruba,3511,Electric power generation,D35
+519af124-5762-4efd-abc9-fc61e11699e9,"Cervantes, Gaines and Briggs",Ethiopia,0111,Crop and animal production,A01
+db043583-3ad7-4895-ba12-93454d1c9e53,Vasquez-Glover,Guatemala,4711,Retail sale in non-specialized stores,G47
+e0bdf07d-7324-4426-938d-56de62de4c13,Valdez-Stephens,Uganda,6419,Other monetary intermediation,K64
+4198e531-a5a0-4a04-ba3b-272998663996,"Walker, Barnes and Reed",Reunion,8622,Specialist medical practice activities,Q86
+b1421965-6b6b-479b-8543-e42999cce563,"Arellano, Moody and Johnson",Jersey,4711,Retail sale in non-specialized stores,G47
+0f9d7ea7-abc6-45de-bc26-9320da61e961,"King, Horn and Colon",Grenada,8622,Specialist medical practice activities,Q86
+c98e8177-756c-44bd-bcb2-71138b8056fb,"Roach, Williams and Robinson",Estonia,3511,Electric power generation,D35
+de7cf77f-d93a-4f1a-a15e-294153d492b6,Alvarado PLC,Wallis and Futuna,6201,Computer programming activities,J62
+360341d0-fe1e-4b4e-a09f-2e8c54362368,Mack PLC,Barbados,4920,Freight transport by road,H49
+c9524d82-9911-49c0-923f-fdd69140463f,"Nunez, Stevens and Guzman",Montenegro,6419,Other monetary intermediation,K64
+c138f54c-a165-4770-9c0c-e97b6d16a0d1,Hoffman-Walsh,Guam,8622,Specialist medical practice activities,Q86
+a1880142-1f03-4363-9395-4fe8c55d41ed,Mcgee-Peterson,Guyana,6201,Computer programming activities,J62
+839d5a3e-dfd3-4700-936a-534468f6b0d0,Rodriguez Ltd,Finland,6419,Other monetary intermediation,K64
+f7da8137-7a16-4fee-bf69-02cd97489a10,Herring PLC,Nigeria,4920,Freight transport by road,H49
+e3a3fe96-eae3-4730-9410-06586e34fd62,"Johnson, Church and Ingram",Latvia,4711,Retail sale in non-specialized stores,G47
+53cc6449-a41e-429c-9274-12813b37d6c2,Shaw PLC,Western Sahara,6419,Other monetary intermediation,K64
+95fb9f6b-29dc-4560-893e-68c32a0e022f,Hobbs-Foster,Spain,4920,Freight transport by road,H49
+80cc6654-eb1d-43f1-8249-9cf0149db9b5,Adams PLC,Zambia,4920,Freight transport by road,H49
+5c29331d-c88d-43ab-a652-a670c4e1a00c,Gomez Group,Switzerland,8622,Specialist medical practice activities,Q86
+9fc65b63-6ed0-4a91-92b5-23cc95b6a43d,Stewart-Hayden,French Guiana,0111,Crop and animal production,A01
+30e41d60-ab67-4754-8cdc-e80db1a1a3fc,Henry-Jones,Cote d'Ivoire,0111,Crop and animal production,A01
+ba737be0-17f8-4420-a668-237da2ad7206,Miller-Combs,Lesotho,6201,Computer programming activities,J62
+7636363b-786c-470d-9d66-0e52fe5ade32,"Banks, Ramos and Russell",Turks and Caicos Islands,3511,Electric power generation,D35
+1537952f-6fe5-48c2-9f80-f10638b7b8ac,Obrien-Lee,Iceland,8622,Specialist medical practice activities,Q86
+03fd298d-0438-4a0a-9d3b-b1243b81a43b,Ramirez LLC,Spain,4711,Retail sale in non-specialized stores,G47
+dcd786b7-4bd3-4982-93c7-0eaeadaf15c4,Russell-Cooper,Iraq,0111,Crop and animal production,A01
+30be229e-5c7a-4f9e-844d-1774dda2fee6,"Woodard, Brown and Mckinney",Botswana,8622,Specialist medical practice activities,Q86
+9dda40c5-97be-4d63-b312-625fc6930e40,"Perez, Johnson and Carter",Pitcairn Islands,3511,Electric power generation,D35
+96fe5055-a0df-4856-9722-15bdd6fcbd83,Simpson LLC,Saint Kitts and Nevis,3511,Electric power generation,D35
+e8cc5de9-2dd8-4857-bfb7-0ffd40b24d50,Davis-Anderson,Georgia,6419,Other monetary intermediation,K64
+600b0d63-2ad8-443f-b60f-054d3090ed89,"Larsen, Francis and Hernandez",Romania,4920,Freight transport by road,H49
+87a5869b-ec3a-4369-833f-94bee2ec254a,"Love, Moore and Wells",Ethiopia,4920,Freight transport by road,H49
+adb39860-0481-469d-a8d2-0c172c14486d,Hall Ltd,El Salvador,6419,Other monetary intermediation,K64
+0bb6b039-e001-46c2-b5fe-4c602f4cdd02,"Hughes, Thompson and Davis",Cambodia,6201,Computer programming activities,J62
+abe3ba4a-d56d-4045-a72d-46d036ecfd30,"Schmidt, Booth and Stephens",Comoros,4920,Freight transport by road,H49
+043d97c8-f056-4cc3-8e58-4427ffac5263,Yang-Becker,Northern Mariana Islands,6419,Other monetary intermediation,K64
+abd6ce6d-f0a7-413b-875b-5d82fdc9f3c8,"Johnson, Long and Johnson",China,8622,Specialist medical practice activities,Q86
+cd090dd1-1799-403f-b73d-634cbe9aed0e,White-Davenport,Equatorial Guinea,3511,Electric power generation,D35
+ea88632d-cb73-4b13-b174-1b5611f8a631,Marks-Gallagher,Austria,6419,Other monetary intermediation,K64
+ef78e69a-ec25-4157-aa5c-af6114a75737,Wagner-Lewis,Nepal,8622,Specialist medical practice activities,Q86
+87a6256d-ec3a-4e85-b4e8-72a653764cb2,Miller-Vasquez,Vanuatu,4711,Retail sale in non-specialized stores,G47
+15ea80d7-1148-4168-9cd2-d2545b3f04b8,"Mcguire, Gonzalez and Jones",Switzerland,3511,Electric power generation,D35
+2d5be879-8f04-4fbc-a909-78fac32cdd2d,Simpson-Salinas,Samoa,3511,Electric power generation,D35
+08906e8d-bc16-478f-a097-8c8caa4a98c4,Pearson Inc,Sao Tome and Principe,3511,Electric power generation,D35
+e0e0022f-d4d7-4641-8411-3d11b2c39c4b,"Lewis, Frederick and Hunter",French Southern Territories,8622,Specialist medical practice activities,Q86
+9990630a-60e6-4c32-a997-764d03fec7ce,Reed-Reid,Bolivia,4920,Freight transport by road,H49
+297beb5c-2c63-4371-9e89-6e90f3eb72d1,"Ellis, Thompson and Garner",British Virgin Islands,0111,Crop and animal production,A01
+68e83004-602b-4f1f-87ca-6def042de771,Ferguson-Harvey,Sri Lanka,6419,Other monetary intermediation,K64
+cc88c40a-aceb-49b5-a9ee-917562d6c4c1,Golden and Sons,United Arab Emirates,3511,Electric power generation,D35
+a4380314-b393-4fce-aff5-d2870747a5dc,Torres-Lopez,Honduras,0111,Crop and animal production,A01
+18bfdefc-9a62-4d38-9829-dd481237f543,Hart LLC,Angola,3511,Electric power generation,D35
+079cdfd4-bb8f-45ea-90dd-7e97414b495b,"Gould, Wright and Harrell",Western Sahara,4920,Freight transport by road,H49
+00cbd370-71a9-4898-834b-bb270aef14e9,Dudley-Ingram,Burundi,8622,Specialist medical practice activities,Q86
+d4ef65f7-cb9a-4d4a-aa5c-0c583ee8d526,Lambert Inc,Guernsey,6201,Computer programming activities,J62
+04d7dff8-e8fd-4852-a91d-0cccf4130c7c,Brown Group,Sao Tome and Principe,4711,Retail sale in non-specialized stores,G47
+0106b7b7-f2ff-4e04-b591-77fcc5817c99,Johnson and Sons,Togo,0111,Crop and animal production,A01
+7465ddfe-cb28-41a3-9e1a-ee38c5e2c975,Hooper-Anderson,Belarus,6201,Computer programming activities,J62
+1b3ec76e-91cf-4e8e-af3b-b959a33701f1,Rubio Inc,Lithuania,0111,Crop and animal production,A01
+2cef45ed-5638-43d2-a7fc-d764d3387959,Taylor Inc,Micronesia,3020,Manufacture of railway locomotives,C30
+0ee19ee0-5e9c-4d17-b527-a4c171a4a0d4,Lynch-Francis,Iraq,4711,Retail sale in non-specialized stores,G47
+e25563c3-3549-4014-a3dd-c814a56f91a3,"Shannon, Jensen and Pearson",Luxembourg,8622,Specialist medical practice activities,Q86
+466a4e4e-a956-40fd-9bcb-6e8db265be52,Ramsey Ltd,Mali,6201,Computer programming activities,J62
+cb3759ba-a3a5-47b4-9c5e-7526f2ad88aa,"Hinton, Brown and Gray",Canada,4920,Freight transport by road,H49
+b2a216b0-e071-4304-b470-429f21b89e4e,"Haney, Palmer and Young",New Zealand,0111,Crop and animal production,A01
+d85c174e-c2f9-4248-8ab5-389a3f94015e,Osborne and Sons,Western Sahara,4711,Retail sale in non-specialized stores,G47
+0b953b7a-f1fe-4f4a-b7fe-6ec2eabd9614,Barrera Inc,Peru,4920,Freight transport by road,H49
+eea33913-e18f-49ec-8331-364f645f89cf,Potter-Curry,Norway,3020,Manufacture of railway locomotives,C30
+52715905-2b25-4792-8ce5-f65c910371cd,Graham and Sons,Congo,6419,Other monetary intermediation,K64
+c0b4b30d-c473-4287-ba4d-b6e917f6e291,"Campbell, Lyons and Jordan",Niue,4920,Freight transport by road,H49
+6cf36758-2a91-4bfe-b76c-0598d0217fb9,Alexander and Sons,Bahamas,6201,Computer programming activities,J62
+5703c78a-72d9-40e7-8383-9fde4474c6ed,"Adkins, Smith and Mills",Czech Republic,4711,Retail sale in non-specialized stores,G47
+855886f4-400f-42d0-b63c-508463594a0c,Williams Group,Netherlands Antilles,3511,Electric power generation,D35
+1642dd99-65e2-4887-969a-4c956e1580bc,Velez-Sexton,Cyprus,4711,Retail sale in non-specialized stores,G47
+bcf499e4-046b-47aa-815f-3f4cf8f18a23,Simmons-Scott,Reunion,8622,Specialist medical practice activities,Q86
+1081f5f1-b6c1-4298-87a1-e3feb84117be,Jones Ltd,Albania,6419,Other monetary intermediation,K64
+fa2bd02c-d535-42d2-b5f1-7279245d7b98,Olson Ltd,Nicaragua,3020,Manufacture of railway locomotives,C30
+f92fe571-e032-4474-895d-1f7d690ca723,Mcintyre-Williams,Australia,8622,Specialist medical practice activities,Q86
+6a21bab1-c948-4d47-ada4-a52baa0bc2f2,"Lane, Small and Gonzalez",Turks and Caicos Islands,8622,Specialist medical practice activities,Q86
+1c282e61-36e5-4c0d-8f10-a86fac298acc,Gamble PLC,Mayotte,4711,Retail sale in non-specialized stores,G47
+cbeb816a-517c-45a0-859d-9933f2da89dd,Webb-Morales,Uganda,8622,Specialist medical practice activities,Q86
+dfe3ee86-2f05-4329-8884-11ec2b432d65,Ford PLC,Saint Vincent and the Grenadines,6419,Other monetary intermediation,K64
+924af263-4946-4fae-8348-205040598f3c,Sanchez Ltd,Tokelau,8622,Specialist medical practice activities,Q86
+a7dc7181-cb85-4003-a39b-f71f3e75e82b,"Bishop, Bradley and Butler",Fiji,6419,Other monetary intermediation,K64
+5447251d-85b1-42c2-b210-3f03e400d1c4,"Smith, York and Hernandez",Georgia,6201,Computer programming activities,J62
+8887572f-898c-45b5-9d77-cf9381a14508,Ware-Moore,Cuba,6201,Computer programming activities,J62
+2cfb95cf-eeb7-45a7-a6b9-beb95c1fa24e,Campos Group,Japan,0111,Crop and animal production,A01
+14b57a9d-2755-4526-ad6e-f312c9849802,Cooke PLC,Congo,8622,Specialist medical practice activities,Q86
+4a8d8795-01f2-4ad7-8bb2-c07105e9dbb1,Mason-Martinez,Uganda,6419,Other monetary intermediation,K64
+25d6d0d1-077e-4e8c-9f53-58640e964bb2,"Roberts, Stephens and Reyes",Ethiopia,4920,Freight transport by road,H49
+9d1785ba-5fba-42cd-bf31-fbdca240cff4,Larsen-Rogers,Timor-Leste,8622,Specialist medical practice activities,Q86
+4c830521-bcd6-47df-abc4-3763ddc17fa4,Rodriguez PLC,Somalia,3020,Manufacture of railway locomotives,C30
+bc21439a-2848-489b-bbd4-8b7afc7b1647,Griffith PLC,Ireland,0111,Crop and animal production,A01
+07ebd65d-6e7b-4152-9fa4-cd264932b6a3,"Jenkins, Martinez and Hartman",Gabon,3020,Manufacture of railway locomotives,C30
+593a406e-e4ca-40bc-ae72-deb48c08754a,Johnson-King,Saint Pierre and Miquelon,0111,Crop and animal production,A01
+97d253e9-c442-487f-8567-2d89c98e41da,"Adams, Price and Rodriguez",Guernsey,6201,Computer programming activities,J62
+0bc9ce54-2371-4ecd-8b39-d103d91d68ba,Gilmore PLC,Belize,8622,Specialist medical practice activities,Q86
+27cc1fa7-f9f2-4ea6-ac9b-edb7b6f339be,Hill-Carter,Morocco,6201,Computer programming activities,J62
+d844318c-cea6-4e14-9419-a509ffaa1b74,Daniels Ltd,Isle of Man,4711,Retail sale in non-specialized stores,G47
+efbee641-0702-4a93-bee0-f224d0bd5a75,"Thomas, King and Roberts",Greenland,3020,Manufacture of railway locomotives,C30
+7913f47b-35eb-42f9-a985-9551901c6a10,Brown and Sons,Barbados,6201,Computer programming activities,J62
+127bfcbe-0c72-4651-a4ec-87d768025b0a,"Roberts, Lucas and Fischer",Honduras,3511,Electric power generation,D35
+e441494f-957d-4115-adb3-6a620a71264f,Mitchell-Smith,Yemen,6419,Other monetary intermediation,K64
+97b16734-4303-44aa-8226-eb62b63edeab,"Zamora, Butler and Parker",Falkland Islands (Malvinas),4711,Retail sale in non-specialized stores,G47
+47e6587b-8bef-4120-9112-a0aec4c0527d,"Crawford, Houston and Cook",Venezuela,6201,Computer programming activities,J62
+b21c1353-528f-4914-a63f-bad7d3661cb7,Hamilton-Scott,Sierra Leone,3020,Manufacture of railway locomotives,C30
+9ed785e7-7ca8-4bc2-bbf5-a7dea1ca533f,Shaffer-Hartman,Jamaica,4711,Retail sale in non-specialized stores,G47
+bc995e6a-c73a-4be3-abf5-bcdf82e51092,"Miller, Brown and Riley",Japan,6419,Other monetary intermediation,K64
+a0a5d33d-5fcb-44d6-8d66-0e38f8ed2b7a,Brown and Sons,Guinea,6419,Other monetary intermediation,K64
+9125d9d6-d0fa-4163-bfa8-372cac8573d2,Brown PLC,Bhutan,0111,Crop and animal production,A01
+d3ec5f80-6bc4-429a-904b-17caf742d41d,"May, Mendez and Navarro",British Virgin Islands,3020,Manufacture of railway locomotives,C30
+85644ae8-1652-46c7-a974-7843ec32b681,Charles PLC,Somalia,0111,Crop and animal production,A01
+3f56bf17-176a-493e-8ea4-78a7608b8a1d,Jones-Bell,Kazakhstan,3020,Manufacture of railway locomotives,C30
+95f072f0-4ed3-478f-8064-cea4bfc23bff,Guzman-Morrison,Mauritius,4920,Freight transport by road,H49
+8cc5ab2f-7063-47ad-9882-7841e3a6685f,Clark-Guzman,Mayotte,6201,Computer programming activities,J62
+10c8565f-742f-42ec-8c1d-86a00c7ff927,Lozano Ltd,Slovenia,8622,Specialist medical practice activities,Q86
+bf916c9b-1981-4640-87d8-17fa6405097f,Welch PLC,Iceland,3020,Manufacture of railway locomotives,C30
+f07bf30a-17ca-4e46-bd95-4a401fb05a15,Barker-Morris,Vietnam,0111,Crop and animal production,A01
+584301d6-4525-46a9-8976-e66c00b5fe2c,Garrett-Barnett,New Caledonia,4920,Freight transport by road,H49
+d43ea38d-f094-4a1e-b323-a328cd5faf5c,Hunter PLC,Panama,3020,Manufacture of railway locomotives,C30
+3ed7639f-3545-4c33-bb4b-c8162bcc98f9,"Aguilar, Smith and Reilly",Japan,4711,Retail sale in non-specialized stores,G47
+754ed4a4-59d2-4a80-9ef1-c5e9f4df98bd,George-Ray,British Indian Ocean Territory (Chagos Archipelago),4920,Freight transport by road,H49
+3581c508-8136-4dc8-b099-85a19e2f0684,"Smith, Jones and Bird",Aruba,3511,Electric power generation,D35
+60329bea-f2da-48aa-a8d7-9016d0bc3636,Johnson Group,Moldova,6201,Computer programming activities,J62
+7fc1a0cb-8def-42ed-be94-d4aba2070e7f,"Luna, Nelson and Brewer",Albania,6201,Computer programming activities,J62
+87bdae5a-826f-41ed-98ce-bb34fb03d693,"Golden, Hill and Hernandez",Chad,6419,Other monetary intermediation,K64
+4ffc71f4-4f86-4c1c-9d24-c31b777a565c,Green-Brooks,Kazakhstan,0111,Crop and animal production,A01
+8a63edf5-f02a-471d-a5d9-1cd59c430dd2,Baxter LLC,Costa Rica,3020,Manufacture of railway locomotives,C30
+a53366cb-5e89-4ebc-91f2-c2148feaa31e,Harrison-Caldwell,Israel,4920,Freight transport by road,H49
+7a1845ad-278f-401c-8c94-dfc1bbeba1e8,Graham-Hayes,Cameroon,6201,Computer programming activities,J62
+3e0e818f-0e63-4ef7-8ed1-3502b40d762c,Jackson-Smith,Latvia,8622,Specialist medical practice activities,Q86
+65816ff0-4056-40d5-a7d6-274f9f5fe421,"Nelson, Schneider and Wood",Venezuela,0111,Crop and animal production,A01
+906a534d-9677-4056-bdca-f7c8d5a4ec70,"Johnson, Meyer and Mitchell",Myanmar,3020,Manufacture of railway locomotives,C30
+b70fb3ef-00fd-4f04-a1cd-070cb6e45f9f,"Turner, Wells and Campbell",Malaysia,3511,Electric power generation,D35
+fbe5397e-0f8a-4eec-a2ce-3967ab21486a,"Austin, Dickerson and Green",British Virgin Islands,8622,Specialist medical practice activities,Q86
+e88df741-8ebd-444e-9500-2201943c653a,Lopez-Huffman,Ethiopia,3511,Electric power generation,D35
+4958d274-d6fc-4b72-b705-a36e9e2e2e7b,"Harris, Jensen and Reid",Madagascar,4920,Freight transport by road,H49
+7fb60c2f-61e3-493e-952d-4ac70bd27817,"Nelson, Vaughan and Cortez",Slovakia (Slovak Republic),3511,Electric power generation,D35
+d5d63c42-9d4d-41aa-9da5-ecfd911d80d0,Graves-Brown,Latvia,3020,Manufacture of railway locomotives,C30
+e031ae64-0fcd-4741-9927-7b15dbb222a6,Decker-Williams,Cocos (Keeling) Islands,3020,Manufacture of railway locomotives,C30
+adcc61f6-0863-44ee-9fca-20a88da1dfce,Dunn PLC,Namibia,6201,Computer programming activities,J62
+54c0a54e-0fa9-46bc-8a17-90ac5d3b7190,Nguyen-James,Netherlands,0111,Crop and animal production,A01
+a9fab987-3d75-4033-a953-777160b5c225,Hickman Ltd,Jordan,6201,Computer programming activities,J62
+36f4a1fa-e293-4b8c-bf28-6567fb84fa58,Anderson-Young,El Salvador,3020,Manufacture of railway locomotives,C30
+2c4cbcc3-1b2d-4c5f-88c3-c4898c769854,Turner Group,Niger,0111,Crop and animal production,A01
+080c783f-b764-4b7b-be9c-515fc1906c00,Irwin-Murphy,Niger,6419,Other monetary intermediation,K64
+26c4924c-bd71-40b9-843f-ff7e470c2086,"Armstrong, Adams and Hill",Pitcairn Islands,8622,Specialist medical practice activities,Q86
+a86b0ecb-27df-4161-9788-f0e7899e1b40,Ward-Chapman,Equatorial Guinea,6419,Other monetary intermediation,K64
+00a8bdd3-baf2-4766-afe1-e9fa82702be7,Savage Inc,Saint Martin,0111,Crop and animal production,A01
+948b60c0-285e-404b-9e08-a26b3445d05f,Barr-Anderson,Palestinian Territory,6419,Other monetary intermediation,K64
+6a88177d-4096-4f9b-97ec-4ae8b2c77ea8,Lee-Campbell,French Guiana,6201,Computer programming activities,J62
+3aa83248-131a-4889-bde8-db3ad6070383,Romero Group,Tanzania,8622,Specialist medical practice activities,Q86
+c4455cca-1574-499d-97f0-098dc5c4a7df,"Hughes, Flores and Lopez",Saint Barthelemy,4920,Freight transport by road,H49
+717372de-7c25-4547-be5a-525bd1d3f6f7,"Best, Berg and Charles",Kyrgyz Republic,4920,Freight transport by road,H49
+9782e458-8919-48f5-a5c7-5e52d417f576,Merritt and Sons,Czech Republic,4711,Retail sale in non-specialized stores,G47
+04ce3aa0-86b7-4f1a-84bb-9240a0569ab9,"Lee, Reyes and Taylor",Lao People's Democratic Republic,4920,Freight transport by road,H49
+220e2fea-5af4-4a48-8195-e8a2f74edade,Hall-Sanchez,Bolivia,4711,Retail sale in non-specialized stores,G47
+3c6ef4c8-1786-43f1-91e1-148d356aeb08,"White, Estes and Bullock",Solomon Islands,0111,Crop and animal production,A01
+82f29e4b-95e6-4c38-8d93-ba1806fbd556,Faulkner Inc,Uzbekistan,0111,Crop and animal production,A01
+7a6c276d-8e95-41ee-8555-bf3a1a4405bb,Gonzalez LLC,Thailand,6419,Other monetary intermediation,K64
+ce314681-e577-4c5b-bef5-2445acaac25a,"Chavez, Rubio and Brock",Malta,6201,Computer programming activities,J62
+7b990d06-f58a-438e-84fd-4bc988b8cf21,Jones PLC,Latvia,4920,Freight transport by road,H49
+98474e65-867f-4b4c-86bd-7dff7cde7566,"Cline, Ruiz and Herrera",Poland,0111,Crop and animal production,A01
+6728323d-aed2-4e43-bc4f-0f5b19b78690,Hall Inc,Suriname,6201,Computer programming activities,J62
+7b35402b-d5b2-4389-92ca-0ee3726c3698,"Martin, Barnes and Curtis",Seychelles,6201,Computer programming activities,J62
+bf6ec287-891e-4ded-9fb7-64b54e608ec4,Lowe PLC,Pitcairn Islands,3020,Manufacture of railway locomotives,C30
+bdda10ba-4fa3-45b6-a150-cf244e60f3a2,Taylor-Rivera,Mongolia,6419,Other monetary intermediation,K64
+74e103ed-37cd-4090-b9ec-54466e152b78,Edwards Inc,Bermuda,3511,Electric power generation,D35
+9a7c7b2a-7bb1-4f7d-86d9-a624dc972f62,Patterson-Guerrero,Antigua and Barbuda,8622,Specialist medical practice activities,Q86
+c236243a-75dd-453b-a064-cccfe572aeeb,"Martinez, Long and Hart",Cambodia,3511,Electric power generation,D35
+7c792aba-d05e-474d-b49b-fe5a81ae0f97,"Cunningham, Parker and Evans",Cote d'Ivoire,6419,Other monetary intermediation,K64
+5ad67e0b-7a4e-48df-9cda-925ae1f0a2f9,Mueller-Hensley,Japan,4711,Retail sale in non-specialized stores,G47
+655c3763-92ab-4201-a55a-760305489399,"Romero, Bartlett and Moyer",Australia,3020,Manufacture of railway locomotives,C30
+9ef66e72-54f6-469c-aca9-4a14664e07c7,Williams-Alexander,Nicaragua,4920,Freight transport by road,H49
+cdab13e5-3137-46bc-9f3e-29c87b2f589b,Sanchez and Sons,Cape Verde,3511,Electric power generation,D35
+da255468-244d-4cb9-8f21-edb7e3b91f4d,Harris and Sons,Hong Kong,8622,Specialist medical practice activities,Q86
+05bc1229-defa-4b68-a4a0-36da651b9a01,Travis-Williams,Zambia,3511,Electric power generation,D35
+69ef37a5-a59a-4559-8459-cd61c7692ab4,Collier and Sons,Dominica,0111,Crop and animal production,A01
+eea5d906-5867-4672-8156-7e925d16c30d,Harris Ltd,Holy See (Vatican City State),6201,Computer programming activities,J62
+dcdb9427-d82d-4e05-9217-11fcf6c0847f,Mcdonald-Giles,Monaco,4711,Retail sale in non-specialized stores,G47
+fac13066-32ec-4af4-bd56-60ff94d0014d,"Hayes, Clarke and Johnson",Azerbaijan,8622,Specialist medical practice activities,Q86
+9e4557dc-2853-48a2-93cb-9634d4a2122d,Andrade and Sons,Anguilla,6419,Other monetary intermediation,K64
+42854a50-6bcd-4c1c-b9a9-7dfb88c92909,"Gardner, Stein and Williams",Mongolia,6419,Other monetary intermediation,K64
+8b383636-ce10-4295-b96a-1cf593b41db2,Jackson and Sons,Luxembourg,6201,Computer programming activities,J62
+ee1c1be7-ffd7-4529-9653-e020cf479569,"Costa, Ferguson and Brady",Bolivia,4711,Retail sale in non-specialized stores,G47
+5b19fcbf-2de5-40a1-b83e-a6f161ecbbce,"Patterson, Miller and Watkins",Mayotte,6201,Computer programming activities,J62
+d66d7d84-ba02-4186-8eb9-16c7dcf3725e,Snyder Group,Saint Pierre and Miquelon,6419,Other monetary intermediation,K64
+df2d95cf-4db2-427b-ac07-ea15592588b6,"Warner, Crawford and Smith",Bangladesh,0111,Crop and animal production,A01
+29c56684-3d97-4f59-999e-0efadbe868bc,Scott LLC,Faroe Islands,3020,Manufacture of railway locomotives,C30
+244db04e-1007-4dac-8d79-a0be5d7fe133,Hunt and Sons,Sao Tome and Principe,3511,Electric power generation,D35
+039ad85e-dd51-4593-bed5-c37d02f2f142,Lopez-Burke,Bermuda,6201,Computer programming activities,J62
+ffa2d87f-7720-4cdd-9cb1-d96cd442c3d0,Parrish-Smith,China,6419,Other monetary intermediation,K64
+de3ae32e-185b-4f28-af35-87a0f31999b6,Green-Lambert,New Caledonia,6419,Other monetary intermediation,K64
+a7955953-d334-496d-ae38-9da5972e0041,"Boyer, Hernandez and Matthews",Lao People's Democratic Republic,6201,Computer programming activities,J62
+23ab6f3c-21ec-48e7-807c-81e682333a73,Glass Inc,Indonesia,6201,Computer programming activities,J62
+8c46363e-8e64-406c-a9b9-6552091fb9f7,"Foster, Terry and Mitchell",Finland,0111,Crop and animal production,A01
+9554d6b2-c7f8-452b-952a-827f19f7607d,"Daniels, Holmes and Petersen",Italy,3020,Manufacture of railway locomotives,C30
+0a9fc5c0-d60d-43a8-85df-1edadd90dba2,Barrett Group,Saint Helena,4920,Freight transport by road,H49
+c6b97b75-214f-406e-8cbd-01a38fdfbafd,"Ramirez, Levine and Norton",Tokelau,6201,Computer programming activities,J62
+be8cf747-e090-4891-ad3f-4916efee7cbb,Fox Group,Lao People's Democratic Republic,4920,Freight transport by road,H49
+30186cf2-7f95-4ff1-b56e-84d101dad035,Gill Inc,Afghanistan,3020,Manufacture of railway locomotives,C30
+ab38b5d9-f90f-4fc6-ba30-91cef9dc9967,Madden Inc,Equatorial Guinea,4920,Freight transport by road,H49
+1f45a61f-9961-4b06-826a-221619c01320,Grant LLC,Mauritania,3511,Electric power generation,D35
+8d17d892-7582-465e-b63c-31cc9a2f904d,"Hooper, Rodriguez and White",Bermuda,4711,Retail sale in non-specialized stores,G47
+7560bcda-db68-4bb2-b7f1-edb5031d6b79,Taylor Ltd,Hong Kong,4920,Freight transport by road,H49
+dd159bcb-1b09-484b-a141-ed8940ecb4d4,Ward Group,Armenia,6201,Computer programming activities,J62
+fab7e93c-53a7-44d2-b272-da2896e8ca40,Combs Ltd,Slovakia (Slovak Republic),4711,Retail sale in non-specialized stores,G47
+4ff912b6-57ca-4668-ae19-e9e6ed1651cd,"Herrera, Davis and Alexander",Sri Lanka,4711,Retail sale in non-specialized stores,G47
+c5e25f82-7186-4979-a7dc-5657efae6248,Moon Group,Tunisia,6419,Other monetary intermediation,K64
+575e36d9-5ebc-4704-b104-d00f8fb00586,"Murphy, Howard and French",Switzerland,4920,Freight transport by road,H49
+2d3e4bb6-1180-4497-abee-b45331823a37,Barnes-Walker,Russian Federation,6419,Other monetary intermediation,K64
+c1872fa9-f659-46a4-be26-975eb5e2881e,Bishop Ltd,Cameroon,8622,Specialist medical practice activities,Q86
+99632249-ffc7-453b-a4ec-1595c381086a,Gonzalez-Wyatt,Oman,3511,Electric power generation,D35
+8b7911cc-1798-4449-b86d-61bdc06929f0,Maldonado-Williams,Spain,0111,Crop and animal production,A01
+e9e6f2e6-dc34-4410-8165-b548c7283caa,Mcdonald Group,Western Sahara,4711,Retail sale in non-specialized stores,G47
+26e51cb2-272e-4307-aad2-2962bf3fbc60,Benitez Ltd,Mongolia,3020,Manufacture of railway locomotives,C30
+0a7b80e8-cef8-442a-8292-42f859480599,Sellers LLC,Malta,4711,Retail sale in non-specialized stores,G47
+b685e382-bfd2-4970-b2f4-1fba346a3fb6,Simpson-Baker,Gibraltar,3511,Electric power generation,D35
+afe6b58f-9fd6-4a23-8ebf-0e31b1ec9d99,"Delgado, Wagner and Perry",Senegal,6419,Other monetary intermediation,K64
+19212623-5c24-4b8d-bef3-7346a559edee,Mitchell-Medina,Puerto Rico,0111,Crop and animal production,A01
+a752c7ae-95a3-4e1b-af26-d3468b18e666,"Lewis, Roberts and Jones",Guyana,6201,Computer programming activities,J62
+06283413-6bc3-47da-b051-322baf7bdfb5,Dean-Harrington,Zimbabwe,3511,Electric power generation,D35
+4778e4fb-5f63-427c-a7cb-7638a59a2733,Butler-Anderson,Guinea-Bissau,4920,Freight transport by road,H49
+845a9b76-a68c-4e89-9b65-142680396e6e,Vaughn PLC,Tunisia,4711,Retail sale in non-specialized stores,G47
+3789ec2d-26ef-4c2c-b4cb-6512fa46041a,"Hernandez, Willis and Wilson",Congo,3511,Electric power generation,D35
+a7a0b818-ac37-4c4f-aafa-b1cf4273a635,Harrington LLC,Equatorial Guinea,4920,Freight transport by road,H49
+6533cbba-a200-4593-a495-407409dc19d1,Williams-Cox,India,8622,Specialist medical practice activities,Q86
+3b5fadf6-2559-4ef6-9bb7-357fff9f8ff6,Love-Bennett,Tunisia,0111,Crop and animal production,A01
+96f6a0d5-b891-4592-9b8e-f43defb0df45,"Todd, Ferguson and Cole",Malaysia,3020,Manufacture of railway locomotives,C30
+6d75aca6-7619-4f7e-b9fe-34c0b2032efe,Allen-Walsh,Nauru,6201,Computer programming activities,J62
+d6429fa9-e625-466b-a813-6650ece0bd87,Fuller-Dawson,Bulgaria,6201,Computer programming activities,J62
+449e4bf4-75da-4179-8646-3ecc39859b5b,Hale-Jackson,Maldives,8622,Specialist medical practice activities,Q86
+51e10636-ef4a-4f85-ae98-1a6932fee6f7,"Griffith, Mitchell and Miller",Northern Mariana Islands,3511,Electric power generation,D35
+3349a1f3-0791-497b-b713-eb958e35c016,Meza-Short,El Salvador,4920,Freight transport by road,H49
+33b598b5-c5c2-4fd8-93f2-0379525cb3df,Walton-Smith,Comoros,0111,Crop and animal production,A01
+920848e9-d0dc-4f73-acb7-006b49fd6e65,Cox-Smith,Jordan,6201,Computer programming activities,J62
+b364b47b-c634-4ab5-8b5f-69fce4d50726,Perez LLC,Slovakia (Slovak Republic),4920,Freight transport by road,H49
+3f036c4b-481d-415b-b6f4-785b2b557335,"Jimenez, Kim and Morgan",Zambia,6201,Computer programming activities,J62
+62fb3596-c5b8-4ec4-b7f1-0945460acce2,"Medina, Boyd and Fox",Botswana,6201,Computer programming activities,J62
+e76a6f02-c87c-48e5-b9a1-b27730fb0559,Gross Group,Zimbabwe,3020,Manufacture of railway locomotives,C30
+ffb339ef-deb0-4b89-b08a-fe01caccbd34,"Wong, Martinez and Welch",Central African Republic,8622,Specialist medical practice activities,Q86
+90ebbd4c-e0f3-4763-b508-363ab34b3107,Curtis LLC,Korea,0111,Crop and animal production,A01
+6afbd7fc-66da-4990-85c6-e7d7310b8e16,Diaz Group,Philippines,6419,Other monetary intermediation,K64
