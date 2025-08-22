@@ -14,19 +14,21 @@ log_error() { echo "❌ ERROR: $1"; exit 1; }
 # 1. Dynamically fetch GCP Project & Region
 # ==================================================
 if [ -z "${PROJECT_ID:-}" ]; then
-  PROJECT_ID=$(curl -s -H "Metadata-Flavor: Google" \
-    "http://metadata.google.internal/computeMetadata/v1/project/project-id") || log_error "Failed to fetch PROJECT_ID"
+  PROJECT_ID=$(gcloud config get-value project)
 fi
 
 if [ -z "${REGION:-}" ]; then
   ZONE=$(curl -s -H "Metadata-Flavor: Google" \
-    "http://metadata.google.internal/computeMetadata/v1/instance/zone") || log_error "Failed to fetch ZONE"
+    "http://metadata.google.internal/computeMetadata/v1/instance/zone")
   ZONE=${ZONE##*/}
   REGION=${ZONE%-*}
 fi
 
+SERVICE_ACCOUNT="vertex-ai-sa@$PROJECT_ID.iam.gserviceaccount.com"
+
 log_info "Using Project: $PROJECT_ID"
 log_info "Using Region: $REGION"
+log_info "Using Service Account: $SERVICE_ACCOUNT"
 
 # ==================================================
 # 2. Create buckets if not exist
@@ -62,7 +64,7 @@ log_info "Export URI: $EXPORT_URI"
 log_info "Staging Bucket: $STAGING_BUCKET"
 
 # ==================================================
-# 4. Compile pipeline (direct call to Python file)
+# 4. Compile pipeline
 # ==================================================
 if [ -f fincrime_pipeline.py ]; then
   log_info "Compiling pipeline with python3 fincrime_pipeline.py"
@@ -105,6 +107,7 @@ log_info "Submitting Custom Job to Vertex AI..."
 if gcloud ai custom-jobs create \
   --region=$REGION \
   --display-name="fincrime-pipeline-job" \
+  --service-account=$SERVICE_ACCOUNT \
   --config=$CUSTOM_JOB_YAML; then
   log_info "Vertex AI Custom Job submitted successfully!"
 else
