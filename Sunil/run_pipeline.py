@@ -1,52 +1,71 @@
 #!/usr/bin/env python3
-from google.cloud import aiplatform
-import argparse
+"""
+Run FinCrime Pipeline on Vertex AI Pipelines
+"""
 
-def run_pipeline(project_id: str,
-                 region: str,
-                 staging_bucket: str,
-                 input_uri: str,
-                 export_uri: str,
-                 pipeline_spec: str = "fincrime_pipeline.yaml",
-                 model: str = "gemini-1.5-flash"):
-    aiplatform.init(project=project_id,
-                    location=region,
-                    staging_bucket=staging_bucket)
+import argparse
+import subprocess
+from google.cloud import aiplatform
+
+
+def compile_pipeline():
+    """Compile the pipeline definition into YAML."""
+    subprocess.run(
+        [
+            "python",
+            "-m",
+            "kfp.v2.compiler",
+            "--py",
+            "fincrime_pipeline.py",
+            "--output",
+            "fincrime_pipeline.yaml",
+        ],
+        check=True,
+    )
+
+
+def run_pipeline(project, location, staging_bucket, gcs_input_uri, export_uri, model):
+    """Submit pipeline run to Vertex AI Pipelines."""
+
+    aiplatform.init(project=project, location=location)
 
     job = aiplatform.PipelineJob(
-        display_name="fincrime-pipeline-run",
-        template_path=pipeline_spec,
-        pipeline_root=f"{staging_bucket}/pipeline-root",
+        display_name="fincrime-risk-pipeline",
+        template_path="fincrime_pipeline.yaml",
+        pipeline_root=staging_bucket,
         parameter_values={
-            "project": project_id,
-            "location": region,
-            "gcs_input_uri": input_uri,
+            "project": project,
+            "location": location,
+            "gcs_input_uri": gcs_input_uri,
             "gcs_export_uri": export_uri,
             "model": model,
         },
     )
 
-    print(f"Submitting pipeline job: {job.display_name}")
-    job.run(sync=False)
-    print("Pipeline submitted successfully!")
+    job.run(sync=True)
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run FinCrime pipeline on Vertex AI")
-    parser.add_argument("--project", required=True, help="GCP project ID")
-    parser.add_argument("--region", default="us-central1", help="Vertex AI region")
-    parser.add_argument("--staging-bucket", required=True, help="Artifact/staging bucket (gs://...)")
-    parser.add_argument("--input-uri", required=True, help="Input CSV in GCS (gs://...)")
-    parser.add_argument("--export-uri", required=True, help="Output folder in GCS (gs://...)")
-    parser.add_argument("--pipeline-spec", default="fincrime_pipeline.yaml", help="Path to pipeline YAML")
-    parser.add_argument("--model", default="gemini-1.5-flash", help="Generative model to use")
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--project", required=True, help="Google Cloud Project ID")
+    parser.add_argument("--region", required=True, help="Vertex AI region, e.g. us-central1")
+    parser.add_argument("--staging-bucket", required=True, help="GCS bucket for pipeline artifacts (gs://...)")
+    parser.add_argument("--gcs-input-uri", required=True, help="Input CSV/Parquet file in GCS (gs://...)")
+    parser.add_argument("--export-uri", required=True, help="Export GCS path for outputs (gs://...)")
+    parser.add_argument("--model", default="gemini-1.5-flash", help="Gemini model version")
 
     args = parser.parse_args()
+
+    print("✅ Compiling pipeline...")
+    compile_pipeline()
+
+    print("🚀 Submitting pipeline job...")
     run_pipeline(
-        project_id=args.project,
-        region=args.region,
+        project=args.project,
+        location=args.region,
         staging_bucket=args.staging_bucket,
-        input_uri=args.input_uri,
+        gcs_input_uri=args.gcs_input_uri,
         export_uri=args.export_uri,
-        pipeline_spec=args.pipeline_spec,
         model=args.model,
     )

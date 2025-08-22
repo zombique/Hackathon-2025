@@ -24,7 +24,7 @@ Parameters needed:
 ### Streamlit dashboard
 Copy the exported CSVs locally (or mount the bucket) then run:
 ```bash
-streamlit run dashboard.py
+python -m streamlit run dashboard.py
 ```
 
 ### Input CSV required columns

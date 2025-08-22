@@ -13,6 +13,8 @@ from kfp.dsl import (Dataset, Input, Output, component, pipeline)
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
+    cpu_limit="2",
+    memory_limit="4Gi",
 )
 def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     import pandas as pd
@@ -28,7 +30,7 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
-    # ✅ Keep required + optional if present
+ # ✅ Keep required + optional if present                                            
     optional_cols = [
         "industry","transaction_type","channel",
         "customer_segment","relationship_length","product"
@@ -45,6 +47,8 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow"],
+    cpu_limit="2",
+    memory_limit="4Gi",
 )
 def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
     import pandas as pd
@@ -87,20 +91,22 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","google-cloud-aiplatform"],
+    cpu_limit="2",
+    memory_limit="8Gi",
 )
-def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str):
+def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
     import pandas as pd, json
     from vertexai.generative_models import GenerativeModel
     import vertexai
 
     vertexai.init(project=project, location=location)
-    model = GenerativeModel("gemini-1.5-flash")
+    model_instance = GenerativeModel(model)
 
     df = pd.read_parquet(prompts.path)
     results = []
 
     for _, row in df.iterrows():
-        resp = model.generate_content(row["prompt"])
+        resp = model_instance.generate_content(row["prompt"])
         try:
             parsed = json.loads(resp.candidates[0].content.parts[0].text)
         except Exception:
@@ -117,6 +123,8 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
+    cpu_limit="1",
+    memory_limit="2Gi",
 )
 def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd
@@ -132,30 +140,40 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
+    cpu_limit="1",
+    memory_limit="2Gi",
 )
 def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd
     df = pd.read_parquet(results.path)
 
+    # Risk summary
     summary = df.groupby("risk_level").size().reset_index(name="count")
     summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False)
 
-    exploded = df.explode("reasons")
-    reason_counts = exploded.groupby("reasons").size().reset_index(name="count").sort_values("count", ascending=False)
-    reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
+    # Safe handling for "reasons"
+    if "reasons" in df.columns:
+        df["reasons"] = df["reasons"].apply(lambda x: x if isinstance(x, list) else [x])
+        exploded = df.explode("reasons")
+        reason_counts = (
+            exploded.groupby("reasons")
+            .size()
+            .reset_index(name="count")
+            .sort_values("count", ascending=False)
+        )
+        reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
 
 
 # -------------------------
 # Pipeline Definition
 # -------------------------
 @dsl.pipeline(
-    name="fincrime-risk-pipeline",
-    pipeline_root="gs://your-artifact-bucket/pipeline-root"
+    name="fincrime-risk-pipeline"
 )
-def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str):
+def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str, model: str = "gemini-1.5-flash"):
     raw = extract_transactions(gcs_input_uri=gcs_input_uri)
     prompts = build_prompts(transactions=raw.outputs["output"])
-    scored = llm_score(prompts=prompts.outputs["output"], project=project, location=location)
+    scored = llm_score(prompts=prompts.outputs["output"], project=project, location=location, model=model)
     persist_outputs(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
     generate_dashboard(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
 
