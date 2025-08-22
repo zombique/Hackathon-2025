@@ -93,10 +93,9 @@ workerPoolSpecs:
   - machineSpec:
       machineType: n1-standard-4
     replicaCount: 1
-    pythonPackageSpec:
-      executorImageUri: gcr.io/cloud-aiplatform/training/tf-cpu.2-5:latest
-      packageUris: []
-      pythonModule: run_pipeline_auto
+    containerSpec:
+      imageUri: gcr.io/cloud-aiplatform/training/tf-cpu.2-5:latest
+      command: ["python3", "run_pipeline_auto.py"]
       args:
         - --project=$PROJECT_ID
         - --region=$REGION
