@@ -94,7 +94,7 @@ workerPoolSpecs:
       machineType: n1-standard-4
     replicaCount: 1
     containerSpec:
-      imageUri: gcr.io/cloud-aiplatform/training/tf-cpu.2-5:latest
+      imageUri: us-docker.pkg.dev/vertex-ai/training/scikit-learn-cpu.1-0:latest
       command: ["python3", "run_pipeline_auto.py"]
       args:
         - --project=$PROJECT_ID
