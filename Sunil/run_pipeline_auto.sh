@@ -39,10 +39,14 @@ log_info "Using Region: $REGION"
 log_info "Using Service Account: $SERVICE_ACCOUNT"
 
 # ==================================================
-# 2. Create buckets if not exist
+# 2. Create unique bucket names
 # ==================================================
-STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root"
-EXPORT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs"
+UNIQUE_ID=$(date +%s)   # timestamp ensures uniqueness
+STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
+EXPORT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs-${UNIQUE_ID}"
+
+log_info "Staging Bucket will be: $STAGING_BUCKET"
+log_info "Export Bucket will be: $EXPORT_BUCKET"
 
 for BUCKET in "$STAGING_BUCKET" "$EXPORT_BUCKET"; do
   if ! gsutil ls -b "$BUCKET" >/dev/null 2>&1; then
