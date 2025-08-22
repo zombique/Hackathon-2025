@@ -1,0 +1,405 @@
+# PIPELINE DEFINITION
+# Name: fincrime-risk-pipeline
+# Inputs:
+#    gcs_export_uri: str
+#    gcs_input_uri: str
+#    location: str
+#    model: str [Default: 'gemini-1.5-flash']
+#    project: str
+components:
+  comp-build-prompts:
+    executorLabel: exec-build-prompts
+    inputDefinitions:
+      artifacts:
+        transactions:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        output:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-extract-transactions:
+    executorLabel: exec-extract-transactions
+    inputDefinitions:
+      parameters:
+        gcs_input_uri:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        output:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-generate-dashboard:
+    executorLabel: exec-generate-dashboard
+    inputDefinitions:
+      artifacts:
+        results:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        gcs_export_uri:
+          parameterType: STRING
+  comp-llm-score:
+    executorLabel: exec-llm-score
+    inputDefinitions:
+      artifacts:
+        prompts:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        location:
+          parameterType: STRING
+        model:
+          parameterType: STRING
+        project:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        output:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-persist-outputs:
+    executorLabel: exec-persist-outputs
+    inputDefinitions:
+      artifacts:
+        results:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        gcs_export_uri:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-build-prompts:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - build_prompts
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pandas==2.2.2'\
+          \ 'pyarrow'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef build_prompts(transactions: Input[Dataset], output: Output[Dataset]):\n\
+          \    import pandas as pd\n\n    df = pd.read_parquet(transactions.path)\n\
+          \    prompts = []\n    for _, row in df.iterrows():\n        context_parts\
+          \ = []\n        for col in df.columns:\n            if col not in [\"transaction_id\"\
+          ]:\n                context_parts.append(f\"{col}: {row[col]}\")\n     \
+          \   context = \", \".join(context_parts)\n\n        prompt = f\"\"\"\n \
+          \       You are a FinCrime risk assistant. Given a transaction, decide if\
+          \ doing business is reasonable.\n\n        Transaction Details: {context}\n\
+          \n        Return ONLY strict JSON with fields:\n        - risk_level (LOW\
+          \ | MEDIUM | HIGH)\n        - reasons (list of strings)\n        - suggested_actions\
+          \ (list of strings)\n\n        Consider:\n        - Sanctioned or high-risk\
+          \ regions\n        - Industry or customer profile mismatches\n        -\
+          \ Unusual amounts relative to segment/industry\n        - Cross-border and\
+          \ high-value red flags\n        - Channel-specific risk factors\n      \
+          \  - Transaction type anomalies\n        \"\"\"\n        prompts.append({\"\
+          transaction_id\": row[\"transaction_id\"], \"prompt\": prompt})\n\n    pd.DataFrame(prompts).to_parquet(output.path,\
+          \ index=False)\n\n"
+        image: python:3.10
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 4.294967296
+          resourceCpuLimit: '2'
+          resourceMemoryLimit: 4Gi
+    exec-extract-transactions:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - extract_transactions
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pandas==2.2.2'\
+          \ 'pyarrow' 'gcsfs'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef extract_transactions(gcs_input_uri: str, output: Output[Dataset]):\n\
+          \    import pandas as pd\n\n    df = pd.read_csv(gcs_input_uri) if gcs_input_uri.endswith(\"\
+          .csv\") else pd.read_parquet(gcs_input_uri)\n\n    required_cols = [\n \
+          \       \"transaction_id\",\"originator_name\",\"beneficiary_name\",\n \
+          \       \"amount\",\"currency\",\"value_date\",\n        \"originator_country\"\
+          ,\"beneficiary_country\",\"purpose\"\n    ]\n    missing = [c for c in required_cols\
+          \ if c not in df.columns]\n    if missing:\n        raise ValueError(f\"\
+          Missing required columns: {missing}\")\n\n    optional_cols = [\n      \
+          \  \"industry\",\"transaction_type\",\"channel\",\n        \"customer_segment\"\
+          ,\"relationship_length\",\"product\"\n    ]\n    keep_cols = required_cols\
+          \ + [c for c in optional_cols if c in df.columns]\n    df = df[keep_cols]\n\
+          \n    df.to_parquet(output.path, index=False)\n\n"
+        image: python:3.10
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 4.294967296
+          resourceCpuLimit: '2'
+          resourceMemoryLimit: 4Gi
+    exec-generate-dashboard:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - generate_dashboard
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pandas==2.2.2'\
+          \ 'pyarrow' 'gcsfs'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef generate_dashboard(results: Input[Dataset], gcs_export_uri: str):\n\
+          \    import pandas as pd\n    df = pd.read_parquet(results.path)\n\n   \
+          \ summary = df.groupby(\"risk_level\").size().reset_index(name=\"count\"\
+          )\n    summary.to_csv(gcs_export_uri.rstrip(\"/\") + \"/risk_summary.csv\"\
+          , index=False)\n\n    if \"reasons\" in df.columns:\n        df[\"reasons\"\
+          ] = df[\"reasons\"].apply(lambda x: x if isinstance(x, list) else [x])\n\
+          \        exploded = df.explode(\"reasons\")\n        reason_counts = (\n\
+          \            exploded.groupby(\"reasons\")\n            .size()\n      \
+          \      .reset_index(name=\"count\")\n            .sort_values(\"count\"\
+          , ascending=False)\n        )\n        reason_counts.to_csv(gcs_export_uri.rstrip(\"\
+          /\") + \"/reason_summary.csv\", index=False)\n\n"
+        image: python:3.10
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 2.147483648
+          resourceCpuLimit: '1'
+          resourceMemoryLimit: 2Gi
+    exec-llm-score:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - llm_score
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pandas==2.2.2'\
+          \ 'google-cloud-aiplatform'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef llm_score(prompts: Input[Dataset], output: Output[Dataset], project:\
+          \ str, location: str, model: str):\n    import pandas as pd, json\n    from\
+          \ vertexai.generative_models import GenerativeModel\n    import vertexai\n\
+          \n    vertexai.init(project=project, location=location)\n    model_instance\
+          \ = GenerativeModel(model)\n\n    df = pd.read_parquet(prompts.path)\n \
+          \   results = []\n\n    for _, row in df.iterrows():\n        resp = model_instance.generate_content(row[\"\
+          prompt\"])\n        try:\n            parsed = json.loads(resp.candidates[0].content.parts[0].text)\n\
+          \        except Exception:\n            parsed = {\"risk_level\": \"UNKNOWN\"\
+          , \"reasons\": [\"parse_error\"], \"suggested_actions\": []}\n        parsed[\"\
+          transaction_id\"] = row[\"transaction_id\"]\n        results.append(parsed)\n\
+          \n    pd.DataFrame(results).to_parquet(output.path, index=False)\n\n"
+        image: python:3.10
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 8.589934592
+          resourceCpuLimit: '2'
+          resourceMemoryLimit: 8Gi
+    exec-persist-outputs:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - persist_outputs
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pandas==2.2.2'\
+          \ 'pyarrow' 'gcsfs'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef persist_outputs(results: Input[Dataset], gcs_export_uri: str):\n\
+          \    import pandas as pd\n\n    df = pd.read_parquet(results.path)\n   \
+          \ out_csv = gcs_export_uri.rstrip(\"/\") + \"/decisions.csv\"\n    df.to_csv(out_csv,\
+          \ index=False)\n\n"
+        image: python:3.10
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 2.147483648
+          resourceCpuLimit: '1'
+          resourceMemoryLimit: 2Gi
+pipelineInfo:
+  name: fincrime-risk-pipeline
+root:
+  dag:
+    tasks:
+      build-prompts:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-build-prompts
+        dependentTasks:
+        - extract-transactions
+        inputs:
+          artifacts:
+            transactions:
+              taskOutputArtifact:
+                outputArtifactKey: output
+                producerTask: extract-transactions
+        taskInfo:
+          name: build-prompts
+      extract-transactions:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-extract-transactions
+        inputs:
+          parameters:
+            gcs_input_uri:
+              componentInputParameter: gcs_input_uri
+        taskInfo:
+          name: extract-transactions
+      generate-dashboard:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-generate-dashboard
+        dependentTasks:
+        - llm-score
+        inputs:
+          artifacts:
+            results:
+              taskOutputArtifact:
+                outputArtifactKey: output
+                producerTask: llm-score
+          parameters:
+            gcs_export_uri:
+              componentInputParameter: gcs_export_uri
+        taskInfo:
+          name: generate-dashboard
+      llm-score:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-llm-score
+        dependentTasks:
+        - build-prompts
+        inputs:
+          artifacts:
+            prompts:
+              taskOutputArtifact:
+                outputArtifactKey: output
+                producerTask: build-prompts
+          parameters:
+            location:
+              componentInputParameter: location
+            model:
+              componentInputParameter: model
+            project:
+              componentInputParameter: project
+        taskInfo:
+          name: llm-score
+      persist-outputs:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-persist-outputs
+        dependentTasks:
+        - llm-score
+        inputs:
+          artifacts:
+            results:
+              taskOutputArtifact:
+                outputArtifactKey: output
+                producerTask: llm-score
+          parameters:
+            gcs_export_uri:
+              componentInputParameter: gcs_export_uri
+        taskInfo:
+          name: persist-outputs
+  inputDefinitions:
+    parameters:
+      gcs_export_uri:
+        parameterType: STRING
+      gcs_input_uri:
+        parameterType: STRING
+      location:
+        parameterType: STRING
+      model:
+        defaultValue: gemini-1.5-flash
+        isOptional: true
+        parameterType: STRING
+      project:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
