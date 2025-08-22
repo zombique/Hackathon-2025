@@ -27,15 +27,17 @@ if [ -z "${REGION:-}" ]; then
     ZONE=${ZONE##*/}
     REGION=${ZONE%-*}
   else
-    REGION="us-central1" # default fallback
+    REGION="asia-southeast1" # default primary region
     log_info "No metadata zone found, defaulting REGION=$REGION"
   fi
 fi
 
+FALLBACK_REGION="us-central1" # always has more capacity
 SERVICE_ACCOUNT="vertex-ai-sa@$PROJECT_ID.iam.gserviceaccount.com"
 
 log_info "Using Project: $PROJECT_ID"
-log_info "Using Region: $REGION"
+log_info "Using Primary Region: $REGION"
+log_info "Fallback Region: $FALLBACK_REGION"
 log_info "Using Service Account: $SERVICE_ACCOUNT"
 
 # ==================================================
@@ -92,35 +94,62 @@ fi
 # ==================================================
 CUSTOM_JOB_YAML="custom_job.yaml"
 
+generate_job_yaml() {
 cat > $CUSTOM_JOB_YAML <<EOF
 workerPoolSpecs:
   - machineSpec:
       machineType: n1-standard-4
     replicaCount: 1
     containerSpec:
-      imageUri: asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
+      imageUri: ${1}-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
       command: ["python3", "run_pipeline_auto.py"]
       args:
         - --project=$PROJECT_ID
-        - --region=$REGION
+        - --region=$2
         - --staging-bucket=$STAGING_BUCKET
         - --gcs-input-uri=$INPUT_URI
         - --export-uri=$EXPORT_URI
         - --model=gemini-1.5-flash
 EOF
-
-log_info "Generated Vertex AI Custom Job YAML at $CUSTOM_JOB_YAML"
+}
 
 # ==================================================
-# 6. Submit Custom Job to Vertex AI
+# 6. Submit Job (with fallback region support)
 # ==================================================
-log_info "Submitting Custom Job to Vertex AI..."
-if gcloud ai custom-jobs create \
-  --region=$REGION \
-  --display-name="fincrime-pipeline-job" \
-  --service-account=$SERVICE_ACCOUNT \
-  --config=$CUSTOM_JOB_YAML; then
-  log_info "Vertex AI Custom Job submitted successfully!"
-else
-  log_error "Failed to submit Custom Job to Vertex AI"
+submit_job() {
+  local region=$1
+  local repo=$2
+  generate_job_yaml "$repo" "$region"
+
+  log_info "Generated Vertex AI Custom Job YAML for region=$region"
+  log_info "Submitting Custom Job to Vertex AI in $region..."
+
+  JOB_ID=$(gcloud ai custom-jobs create \
+    --region=$region \
+    --display-name="fincrime-pipeline-job" \
+    --service-account=$SERVICE_ACCOUNT \
+    --config=$CUSTOM_JOB_YAML \
+    --format="value(name)" || echo "")
+
+  if [ -z "$JOB_ID" ]; then
+    log_error "Failed to submit job in $region"
+  fi
+
+  echo "$JOB_ID"
+}
+
+# Try primary region first
+JOB_ID=$(submit_job "$REGION" "${REGION%%-*}")
+log_info "Submitted Job: $JOB_ID"
+
+# Wait briefly and check status
+sleep 60
+STATUS=$(gcloud ai custom-jobs describe "$JOB_ID" --region=$REGION --format="value(state)" || echo "UNKNOWN")
+
+if [ "$STATUS" == "PENDING" ]; then
+  log_info "Job stuck in PENDING in $REGION. Retrying in fallback region $FALLBACK_REGION..."
+  JOB_ID=$(submit_job "$FALLBACK_REGION" "us")
+  log_info "Fallback Job Submitted: $JOB_ID"
 fi
+
+log_info "Monitor with: gcloud ai custom-jobs stream-logs $JOB_ID --region=$REGION"
