@@ -88,7 +88,7 @@ else
 fi
 
 # ==================================================
-# 5. Create Custom Job YAML with GCS copy step
+# 5. Create Custom Job YAML with pip install step
 # ==================================================
 CUSTOM_JOB_YAML="custom_job.yaml"
 
@@ -103,6 +103,8 @@ workerPoolSpecs:
         - bash
         - -c
         - |
+          echo "Installing dependencies..." && \
+          pip install --no-cache-dir python-json-logger kfp google-cloud-storage google-cloud-aiplatform pandas && \
           echo "Downloading run_pipeline_auto.py from $STAGING_BUCKET" && \
           gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
           python3 run_pipeline_auto.py \
