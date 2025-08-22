@@ -62,11 +62,11 @@ log_info "Export URI: $EXPORT_URI"
 log_info "Staging Bucket: $STAGING_BUCKET"
 
 # ==================================================
-# 4. Compile pipeline
+# 4. Compile pipeline (direct call to Python file)
 # ==================================================
 if [ -f fincrime_pipeline.py ]; then
-  log_info "Compiling pipeline..."
-  if ! python -m kfp.v2.compiler.Compiler --py fincrime_pipeline.py --output fincrime_pipeline.yaml; then
+  log_info "Compiling pipeline with python3 fincrime_pipeline.py"
+  if ! python3 fincrime_pipeline.py; then
     log_error "Pipeline compilation failed!"
   fi
 else
