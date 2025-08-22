@@ -14,14 +14,22 @@ log_error() { echo "❌ ERROR: $1"; exit 1; }
 # 1. Dynamically fetch GCP Project & Region
 # ==================================================
 if [ -z "${PROJECT_ID:-}" ]; then
-  PROJECT_ID=$(gcloud config get-value project)
+  PROJECT_ID=$(gcloud config get-value project 2>/dev/null || true)
+  if [ -z "$PROJECT_ID" ] || [ "$PROJECT_ID" == "(unset)" ]; then
+    log_error "PROJECT_ID is not set! Run: gcloud config set project YOUR_PROJECT_ID"
+  fi
 fi
 
 if [ -z "${REGION:-}" ]; then
   ZONE=$(curl -s -H "Metadata-Flavor: Google" \
-    "http://metadata.google.internal/computeMetadata/v1/instance/zone")
-  ZONE=${ZONE##*/}
-  REGION=${ZONE%-*}
+    "http://metadata.google.internal/computeMetadata/v1/instance/zone" || true)
+  if [ -n "$ZONE" ]; then
+    ZONE=${ZONE##*/}
+    REGION=${ZONE%-*}
+  else
+    REGION="us-central1" # default fallback
+    log_info "No metadata zone found, defaulting REGION=$REGION"
+  fi
 fi
 
 SERVICE_ACCOUNT="vertex-ai-sa@$PROJECT_ID.iam.gserviceaccount.com"
