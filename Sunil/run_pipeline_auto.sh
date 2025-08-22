@@ -102,7 +102,7 @@ workerPoolSpecs:
     replicaCount: 1
     containerSpec:
       imageUri: ${1}-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
-      command: ["python3", "run_pipeline_auto.py"]
+      command: ["python3", "run_pipeline.py"]
       args:
         - --project=$PROJECT_ID
         - --region=$2
