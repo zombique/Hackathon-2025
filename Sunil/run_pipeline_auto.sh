@@ -41,7 +41,7 @@ log_info "Using Service Account: $SERVICE_ACCOUNT"
 # ==================================================
 # 2. Create unique bucket names
 # ==================================================
-UNIQUE_ID=$(date +%s)   # timestamp ensures uniqueness
+UNIQUE_ID=$(date +%s)
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
 EXPORT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs-${UNIQUE_ID}"
 
@@ -98,7 +98,7 @@ workerPoolSpecs:
       machineType: n1-standard-4
     replicaCount: 1
     containerSpec:
-      imageUri: us-docker.pkg.dev/vertex-ai/training/scikit-learn-cpu.1-0:latest
+      imageUri: asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
       command: ["python3", "run_pipeline_auto.py"]
       args:
         - --project=$PROJECT_ID
