@@ -13,7 +13,6 @@ from kfp.dsl import (Dataset, Input, Output, component, pipeline)
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2", "pyarrow", "gcsfs"],
-    resources={"cpu_limit": "2", "memory_limit": "4Gi"},
 )
 def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     import pandas as pd
@@ -21,18 +20,17 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     df = pd.read_csv(gcs_input_uri) if gcs_input_uri.endswith(".csv") else pd.read_parquet(gcs_input_uri)
 
     required_cols = [
-        "transaction_id", "originator_name", "beneficiary_name",
-        "amount", "currency", "value_date",
-        "originator_country", "beneficiary_country", "purpose"
+        "transaction_id","originator_name","beneficiary_name",
+        "amount","currency","value_date",
+        "originator_country","beneficiary_country","purpose"
     ]
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
-    # ✅ Keep required + optional if present
     optional_cols = [
-        "industry", "transaction_type", "channel",
-        "customer_segment", "relationship_length", "product"
+        "industry","transaction_type","channel",
+        "customer_segment","relationship_length","product"
     ]
     keep_cols = required_cols + [c for c in optional_cols if c in df.columns]
     df = df[keep_cols]
@@ -45,8 +43,7 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2", "pyarrow"],
-    resources={"cpu_limit": "2", "memory_limit": "4Gi"},
+    packages_to_install=["pandas==2.2.2","pyarrow"],
 )
 def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
     import pandas as pd
@@ -88,8 +85,7 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2", "google-cloud-aiplatform"],
-    resources={"cpu_limit": "2", "memory_limit": "8Gi"},
+    packages_to_install=["pandas==2.2.2","google-cloud-aiplatform"],
 )
 def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
     import pandas as pd, json
@@ -119,8 +115,7 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2", "pyarrow", "gcsfs"],
-    resources={"cpu_limit": "1", "memory_limit": "2Gi"},
+    packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
 )
 def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd
@@ -135,18 +130,15 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2", "pyarrow", "gcsfs"],
-    resources={"cpu_limit": "1", "memory_limit": "2Gi"},
+    packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
 )
 def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd
     df = pd.read_parquet(results.path)
 
-    # Risk summary
     summary = df.groupby("risk_level").size().reset_index(name="count")
     summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False)
 
-    # Safe handling for "reasons"
     if "reasons" in df.columns:
         df["reasons"] = df["reasons"].apply(lambda x: x if isinstance(x, list) else [x])
         exploded = df.explode("reasons")
@@ -166,11 +158,11 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     name="fincrime-risk-pipeline"
 )
 def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str, model: str = "gemini-1.5-flash"):
-    raw = extract_transactions(gcs_input_uri=gcs_input_uri)
-    prompts = build_prompts(transactions=raw.outputs["output"])
-    scored = llm_score(prompts=prompts.outputs["output"], project=project, location=location, model=model)
-    persist_outputs(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
-    generate_dashboard(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
+    raw = extract_transactions(gcs_input_uri=gcs_input_uri).set_cpu_limit("2").set_memory_limit("4Gi")
+    prompts = build_prompts(transactions=raw.outputs["output"]).set_cpu_limit("2").set_memory_limit("4Gi")
+    scored = llm_score(prompts=prompts.outputs["output"], project=project, location=location, model=model).set_cpu_limit("2").set_memory_limit("8Gi")
+    persist_outputs(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri).set_cpu_limit("1").set_memory_limit("2Gi")
+    generate_dashboard(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri).set_cpu_limit("1").set_memory_limit("2Gi")
 
 
 # -------------------------
