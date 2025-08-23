@@ -14,8 +14,9 @@ if [[ -z "$REGION" ]]; then
 fi
 JOB_NAME="fincrime-pipeline-job-$(date +%s)"
 
-STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root"
-OUTPUT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs"
+SUFFIX=$(date +%s)
+STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${SUFFIX}"
+OUTPUT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs-${SUFFIX}"
 
 echo "✅ INFO: Using Project: $PROJECT_ID"
 echo "✅ INFO: Using Region: $REGION"
@@ -59,8 +60,7 @@ JOB_ID=$(gcloud ai custom-jobs create \
   --region="$REGION" \
   --display-name="$JOB_NAME" \
   --format="value(name)" \
-  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-15:latest,local-package-path=.,requirements=requirements.txt,python-module=run_pipeline_auto \
-  --args="--project=$PROJECT_ID","--region=$REGION","--staging-bucket=$STAGING_BUCKET","--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv","--export-uri=$OUTPUT_BUCKET/fincrime_output/","--model=gemini-1.5-flash")
+  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/python:3.10,replica-count=1,command="bash","-c","pip install -r $STAGING_BUCKET/code/requirements.txt && python $STAGING_BUCKET/code/run_pipeline_auto.py --project=$PROJECT_ID --region=$REGION --staging-bucket=$STAGING_BUCKET --gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv --export-uri=$OUTPUT_BUCKET/fincrime_output/ --model=gemini-1.5-flash")
 
 echo "✅ INFO: Custom Job submitted: $JOB_ID"
 echo "📡 Streaming logs... (Ctrl+C to stop)"
