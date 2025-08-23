@@ -1,162 +1,80 @@
 #!/bin/bash
 set -euo pipefail
 
-LOG_FILE="run_pipeline.log"
-exec > >(tee -i $LOG_FILE) 2>&1
-
 echo "🚀 Starting FinCrime Pipeline end-to-end on Vertex AI"
-echo "📝 Logging to $LOG_FILE"
+LOG_FILE="run_pipeline.log"
+exec > >(tee -a "$LOG_FILE") 2>&1
 
-log_info()  { echo "✅ INFO: $1"; }
-log_error() { echo "❌ ERROR: $1"; exit 1; }
-
-# ==================================================
-# 1. Get GCP Project & Region
-# ==================================================
-if [ -z "${PROJECT_ID:-}" ]; then
-  PROJECT_ID=$(gcloud config get-value project 2>/dev/null || true)
-  if [ -z "$PROJECT_ID" ] || [ "$PROJECT_ID" == "(unset)" ]; then
-    log_error "PROJECT_ID is not set! Run: gcloud config set project YOUR_PROJECT_ID"
-  fi
+# Detect project and region
+PROJECT=$(gcloud config get-value project)
+REGION=$(gcloud config get-value compute/region)
+if [[ -z "$REGION" || "$REGION" == "(unset)" ]]; then
+  REGION="asia-southeast1"
 fi
 
-if [ -z "${REGION:-}" ]; then
-  ZONE=$(curl -s -H "Metadata-Flavor: Google" \
-    "http://metadata.google.internal/computeMetadata/v1/instance/zone" || true)
-  if [ -n "$ZONE" ]; then
-    ZONE=${ZONE##*/}
-    REGION=${ZONE%-*}
-  else
-    REGION="us-central1"
-    log_info "Defaulting REGION=$REGION"
-  fi
-fi
+SERVICE_ACCOUNT="vertex-ai-sa@${PROJECT}.iam.gserviceaccount.com"
 
-SERVICE_ACCOUNT="vertex-ai-sa@$PROJECT_ID.iam.gserviceaccount.com"
+echo "✅ INFO: Using Project: $PROJECT"
+echo "✅ INFO: Using Region: $REGION"
+echo "✅ INFO: Using Service Account: $SERVICE_ACCOUNT"
 
-log_info "Using Project: $PROJECT_ID"
-log_info "Using Region: $REGION"
-log_info "Using Service Account: $SERVICE_ACCOUNT"
+# Buckets (add random suffix to avoid conflicts)
+SUFFIX=$(date +%s)
+STAGING_BUCKET="gs://${PROJECT}-fincrime-pipeline-root-${SUFFIX}"
+OUTPUT_BUCKET="gs://${PROJECT}-fincrime-outputs-${SUFFIX}"
 
-# ==================================================
-# 2. Buckets (unique per run)
-# ==================================================
-UNIQUE_ID=$(date +%s)
-STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
-EXPORT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs-${UNIQUE_ID}"
+# Create buckets if not exist
+echo "✅ INFO: Creating buckets..."
+gsutil mb -l "$REGION" -p "$PROJECT" "$STAGING_BUCKET" || echo "ℹ️ Bucket $STAGING_BUCKET already exists"
+gsutil mb -l "$REGION" -p "$PROJECT" "$OUTPUT_BUCKET" || echo "ℹ️ Bucket $OUTPUT_BUCKET already exists"
 
-for BUCKET in "$STAGING_BUCKET" "$EXPORT_BUCKET"; do
-  if ! gsutil ls -b "$BUCKET" >/dev/null 2>&1; then
-    log_info "Creating GCS bucket: $BUCKET"
-    gsutil mb -l "$REGION" "$BUCKET"
-  else
-    log_info "Bucket already exists: $BUCKET"
-  fi
-done
+# Upload input data
+echo "✅ INFO: Uploading transactions_sample.csv to $OUTPUT_BUCKET"
+gsutil cp transactions_sample.csv "$OUTPUT_BUCKET/"
 
-# ==================================================
-# 3. Upload CSV + Python scripts + requirements.txt
-# ==================================================
-LOCAL_FILE="transactions_sample.csv"
-if [ -f "$LOCAL_FILE" ]; then
-  gsutil cp "$LOCAL_FILE" "$EXPORT_BUCKET/"
-else
-  log_error "transactions_sample.csv not found locally!"
-fi
+INPUT_URI="${OUTPUT_BUCKET}/transactions_sample.csv"
+EXPORT_URI="${OUTPUT_BUCKET}/fincrime_output/"
 
-for SCRIPT in run_pipeline_auto.py fincrime_pipeline.py; do
-  if [ -f "$SCRIPT" ]; then
-    log_info "Uploading $SCRIPT to $STAGING_BUCKET"
-    gsutil cp "$SCRIPT" "$STAGING_BUCKET/"
-  else
-    log_error "$SCRIPT not found locally!"
-  fi
-done
+echo "✅ INFO: Input URI: $INPUT_URI"
+echo "✅ INFO: Export URI: $EXPORT_URI"
+echo "✅ INFO: Staging Bucket: $STAGING_BUCKET"
 
-# Write corrected requirements.txt
-cat > requirements.txt <<EOF
-python-json-logger==2.0.7
-kfp==2.5.0
-google-cloud-storage==2.19.0
-google-cloud-aiplatform==1.110.0
-pandas==2.3.2
-protobuf==3.20.3
-EOF
+# Compile pipeline locally
+echo "✅ INFO: Compiling pipeline with python3 fincrime_pipeline.py"
+python3 fincrime_pipeline.py
+echo "✅ INFO: Generated Vertex AI Pipeline spec at fincrime_pipeline.yaml"
 
-log_info "Uploading corrected requirements.txt to $STAGING_BUCKET"
-gsutil cp "requirements.txt" "$STAGING_BUCKET/"
+# Upload required scripts and YAML so container can use them
+echo "✅ INFO: Uploading pipeline spec and launcher script to staging bucket"
+gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET/"
+gsutil cp run_pipeline_auto.py "$STAGING_BUCKET/"
 
-INPUT_URI="$EXPORT_BUCKET/transactions_sample.csv"
-EXPORT_URI="$EXPORT_BUCKET/fincrime_output/"
-
-log_info "Input URI: $INPUT_URI"
-log_info "Export URI: $EXPORT_URI"
-log_info "Staging Bucket: $STAGING_BUCKET"
-
-# ==================================================
-# 4. Compile pipeline locally
-# ==================================================
-if [ -f fincrime_pipeline.py ]; then
-  python3 fincrime_pipeline.py || log_error "Pipeline compilation failed!"
-else
-  log_error "fincrime_pipeline.py not found!"
-fi
-
-if [ -f fincrime_pipeline.yaml ]; then
-  log_info "Uploading fincrime_pipeline.yaml to $STAGING_BUCKET"
-  gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET/"
-else
-  log_error "fincrime_pipeline.yaml not found after compilation!"
-fi
-
-# ==================================================
-# 5. Create Custom Job YAML
-# ==================================================
-CUSTOM_JOB_YAML="custom_job.yaml"
-
-cat > $CUSTOM_JOB_YAML <<EOF
+# Generate Custom Job YAML
+cat > custom_job.yaml <<EOF
 workerPoolSpecs:
   - machineSpec:
       machineType: n1-standard-4
     replicaCount: 1
-    containerSpec:
-      imageUri: ${REGION%%-*}-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
-      command:
-        - bash
-        - -c
-        - |
-          echo "Installing python-json-logger first..." && \
-          pip install --no-cache-dir python-json-logger==2.0.7 || true && \
-          rm -f \$(python3 -c "import site; print(site.getsitepackages()[0])")/sitecustomize.py || true && \
-          echo "Installing dependencies..." && \
-          python3 -m pip install --upgrade pip setuptools wheel && \
-          gsutil cp $STAGING_BUCKET/requirements.txt . && \
-          pip install --no-cache-dir --use-pep517 -r requirements.txt && \
-          pip uninstall -y google-cloud-datastore || true && \
-          echo "Downloading pipeline files from $STAGING_BUCKET" && \
-          gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
-          gsutil cp $STAGING_BUCKET/fincrime_pipeline.py . && \
-          gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . || true && \
-          echo "Compiling pipeline..." && \
-          python3 fincrime_pipeline.py && \
-          echo "Running pipeline job..." && \
-          python3 run_pipeline_auto.py \
-            --project=$PROJECT_ID \
-            --region=$REGION \
-            --staging-bucket=$STAGING_BUCKET \
-            --gcs-input-uri=$INPUT_URI \
-            --export-uri=$EXPORT_URI \
-            --model=gemini-1.5-flash
+    pythonPackageSpec:
+      executorImageUri: asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
+      packageUris: []
+      pythonModule: run_pipeline_auto
+      args:
+        --project=${PROJECT}
+        --region=${REGION}
+        --staging-bucket=${STAGING_BUCKET}
+        --gcs-input-uri=${INPUT_URI}
+        --export-uri=${EXPORT_URI}
+        --model=gemini-1.5-flash
 EOF
 
-log_info "Generated Vertex AI Custom Job YAML at $CUSTOM_JOB_YAML"
+echo "✅ INFO: Generated Vertex AI Custom Job YAML at custom_job.yaml"
 
-# ==================================================
-# 6. Submit Custom Job
-# ==================================================
-log_info "Submitting Custom Job to Vertex AI..."
+# Submit job
+echo "✅ INFO: Submitting Custom Job to Vertex AI..."
 gcloud ai custom-jobs create \
-  --region=$REGION \
+  --region="$REGION" \
   --display-name="fincrime-pipeline-job" \
-  --service-account=$SERVICE_ACCOUNT \
-  --config=$CUSTOM_JOB_YAML
+  --config=custom_job.yaml \
+  --project="$PROJECT" \
+  --service-account="$SERVICE_ACCOUNT"
