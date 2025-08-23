@@ -45,6 +45,13 @@ UNIQUE_ID=$(date +%s)
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
 EXPORT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs-${UNIQUE_ID}"
 
+cleanup() {
+  log_info "Cleaning up staging bucket..."
+  gsutil -m rm -r "$STAGING_BUCKET" || true
+  log_info "Cleanup completed."
+}
+trap cleanup EXIT
+
 for BUCKET in "$STAGING_BUCKET" "$EXPORT_BUCKET"; do
   if ! gsutil ls -b "$BUCKET" >/dev/null 2>&1; then
     log_info "Creating GCS bucket: $BUCKET"
@@ -55,7 +62,7 @@ for BUCKET in "$STAGING_BUCKET" "$EXPORT_BUCKET"; do
 done
 
 # ==================================================
-# 3. Upload CSV + Python script to GCS
+# 3. Upload CSV + Python scripts + requirements.txt
 # ==================================================
 LOCAL_FILE="transactions_sample.csv"
 if [ -f "$LOCAL_FILE" ]; then
@@ -69,6 +76,13 @@ if [ -f "run_pipeline_auto.py" ]; then
   gsutil cp "run_pipeline_auto.py" "$STAGING_BUCKET/"
 else
   log_error "run_pipeline_auto.py not found locally!"
+fi
+
+if [ -f "requirements.txt" ]; then
+  log_info "Uploading requirements.txt to $STAGING_BUCKET"
+  gsutil cp "requirements.txt" "$STAGING_BUCKET/"
+else
+  log_error "requirements.txt not found locally!"
 fi
 
 INPUT_URI="$EXPORT_BUCKET/transactions_sample.csv"
@@ -87,8 +101,15 @@ else
   log_error "fincrime_pipeline.py not found!"
 fi
 
+if [ -f fincrime_pipeline.yaml ]; then
+  log_info "Uploading fincrime_pipeline.yaml to $STAGING_BUCKET"
+  gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET/"
+else
+  log_error "fincrime_pipeline.yaml not found after compilation!"
+fi
+
 # ==================================================
-# 5. Create Custom Job YAML with pip install step
+# 5. Create Custom Job YAML with requirements.txt
 # ==================================================
 CUSTOM_JOB_YAML="custom_job.yaml"
 
@@ -104,9 +125,11 @@ workerPoolSpecs:
         - -c
         - |
           echo "Installing dependencies..." && \
-          pip install --no-cache-dir python-json-logger kfp google-cloud-storage google-cloud-aiplatform pandas && \
-          echo "Downloading run_pipeline_auto.py from $STAGING_BUCKET" && \
+          gsutil cp $STAGING_BUCKET/requirements.txt . && \
+          pip install --no-cache-dir --use-pep517 -r requirements.txt && \
+          echo "Downloading pipeline files from $STAGING_BUCKET" && \
           gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
+          gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . && \
           python3 run_pipeline_auto.py \
             --project=$PROJECT_ID \
             --region=$REGION \
