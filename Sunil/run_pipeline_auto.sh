@@ -39,7 +39,7 @@ log_info "Using Region: $REGION"
 log_info "Using Service Account: $SERVICE_ACCOUNT"
 
 # ==================================================
-# 2. Buckets (keep them between runs)
+# 2. Buckets (keep them until manual cleanup)
 # ==================================================
 UNIQUE_ID=$(date +%s)
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
@@ -71,10 +71,10 @@ else
   log_error "run_pipeline_auto.py not found locally!"
 fi
 
-# Always regenerate fixed requirements.txt before upload
+# Correct requirements.txt
 cat > requirements.txt <<EOF
 python-json-logger==2.0.7
-kfp==2.14.2
+kfp==2.5.0
 google-cloud-storage==2.19.0
 google-cloud-aiplatform==1.110.0
 pandas==2.3.2
@@ -92,7 +92,7 @@ log_info "Export URI: $EXPORT_URI"
 log_info "Staging Bucket: $STAGING_BUCKET"
 
 # ==================================================
-# 4. Compile pipeline
+# 4. Compile pipeline locally
 # ==================================================
 if [ -f fincrime_pipeline.py ]; then
   python3 fincrime_pipeline.py || log_error "Pipeline compilation failed!"
@@ -131,7 +131,10 @@ workerPoolSpecs:
           rm -f \$(python3 -c "import site; print(site.getsitepackages()[0])")/sitecustomize.py || true && \
           echo "Downloading pipeline files from $STAGING_BUCKET" && \
           gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
-          gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . && \
+          gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . || true && \
+          echo "Compiling pipeline..." && \
+          python3 fincrime_pipeline.py && \
+          echo "Running pipeline job..." && \
           python3 run_pipeline_auto.py \
             --project=$PROJECT_ID \
             --region=$REGION \

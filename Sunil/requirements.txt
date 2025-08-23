@@ -1,5 +1,5 @@
 python-json-logger==2.0.7
-kfp==2.14.2
+kfp==2.5.0
 google-cloud-storage==2.19.0
 google-cloud-aiplatform==1.110.0
 pandas==2.3.2
