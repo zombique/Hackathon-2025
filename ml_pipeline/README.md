@@ -59,7 +59,9 @@ gcloud functions deploy suspicious-transactions \
 
 ## cloud function URLS
 train: https://us-central1-sonic-totem-469814-q5.cloudfunctions.net/train-model
+
 predict: https://us-central1-sonic-totem-469814-q5.cloudfunctions.net/predict-transaction (runs automatic)
+
 view: https://us-central1-sonic-totem-469814-q5.cloudfunctions.net/suspicious-transactions
 
 ##clean up script
