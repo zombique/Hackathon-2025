@@ -28,17 +28,17 @@ def run_pipeline(project_id: str,
 
     print(f"Submitting pipeline job: {job.display_name}")
     job.run(sync=False)
-    print("Pipeline submitted successfully!")
+    print(f"Pipeline submitted successfully! Track it in Vertex AI Console under project '{project_id}', region '{region}'.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FinCrime pipeline on Vertex AI")
     parser.add_argument("--project", required=True, help="GCP project ID")
     parser.add_argument("--region", default="us-central1", help="Vertex AI region")
     parser.add_argument("--staging-bucket", required=True, help="Artifact/staging bucket (gs://...)")
-    parser.add_argument("--input-uri", required=True, help="Input CSV in GCS (gs://...)")
+    parser.add_argument("--input-uri", required=True, help="Input CSV/Parquet in GCS (gs://...)")
     parser.add_argument("--export-uri", required=True, help="Output folder in GCS (gs://...)")
-    parser.add_argument("--pipeline-spec", default="fincrime_pipeline.yaml", help="Path to pipeline YAML")
-    parser.add_argument("--model", default="gemini-1.5-flash", help="Generative model to use")
+    parser.add_argument("--pipeline-spec", default="fincrime_pipeline.yaml", help="Path to compiled pipeline YAML")
+    parser.add_argument("--model", default="gemini-1.5-flash", help="Generative model to use (e.g., gemini-1.5-pro)")
 
     args = parser.parse_args()
     run_pipeline(
