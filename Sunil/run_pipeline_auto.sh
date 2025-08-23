@@ -59,7 +59,7 @@ JOB_ID=$(gcloud ai custom-jobs create \
   --region="$REGION" \
   --display-name="$JOB_NAME" \
   --format="value(name)" \
-  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/python:3.10,script=run_pipeline_auto.py,requirements=requirements.txt \
+  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-15:latest,local-package-path=.,requirements=requirements.txt,python-module=run_pipeline_auto \
   --args="--project=$PROJECT_ID","--region=$REGION","--staging-bucket=$STAGING_BUCKET","--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv","--export-uri=$OUTPUT_BUCKET/fincrime_output/","--model=gemini-1.5-flash")
 
 echo "✅ INFO: Custom Job submitted: $JOB_ID"
