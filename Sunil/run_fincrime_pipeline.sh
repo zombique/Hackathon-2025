@@ -69,7 +69,7 @@ else
   log_error "transactions_sample.csv not found locally!"
 fi
 
-for SCRIPT in run_pipeline_auto.py fincrime_pipeline.py; do
+for SCRIPT in run_pipeline.py fincrime_pipeline.py; do
   if [ -f "$SCRIPT" ]; then
     log_info "Uploading $SCRIPT to $STAGING_BUCKET"
     gsutil cp "$SCRIPT" "$STAGING_BUCKET/"
