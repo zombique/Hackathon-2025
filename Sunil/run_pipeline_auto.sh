@@ -39,18 +39,11 @@ log_info "Using Region: $REGION"
 log_info "Using Service Account: $SERVICE_ACCOUNT"
 
 # ==================================================
-# 2. Buckets
+# 2. Buckets (keep them between runs)
 # ==================================================
 UNIQUE_ID=$(date +%s)
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
 EXPORT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs-${UNIQUE_ID}"
-
-cleanup() {
-  log_info "Cleaning up staging bucket..."
-  gsutil -m rm -r "$STAGING_BUCKET" || true
-  log_info "Cleanup completed."
-}
-trap cleanup EXIT
 
 for BUCKET in "$STAGING_BUCKET" "$EXPORT_BUCKET"; do
   if ! gsutil ls -b "$BUCKET" >/dev/null 2>&1; then
