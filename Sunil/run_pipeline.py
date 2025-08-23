@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument("--input-uri", required=True, help="Input CSV/Parquet in GCS (gs://...)")
     parser.add_argument("--export-uri", required=True, help="Output folder in GCS (gs://...)")
     parser.add_argument("--pipeline-spec", default="fincrime_pipeline.yaml", help="Path to compiled pipeline YAML")
-    parser.add_argument("--model", default="gemini-2.5-flash-lite", help="Generative model to use (e.g., gemini-2.5-flash)")
+    parser.add_argument("--model", default="gemini-2.5-flash-lite", help="Generative model to use (e.g.gemini-2.5-flash)")
 
     args = parser.parse_args()
     run_pipeline(
