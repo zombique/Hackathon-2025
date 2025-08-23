@@ -6,6 +6,9 @@
 
 set -euo pipefail
 
+# Default model if not provided
+MODEL="${MODEL:-gemini-1.5-flash}"
+
 LOG_FILE="run_pipeline.log"
 exec > >(tee -i $LOG_FILE) 2>&1
 
@@ -76,8 +79,8 @@ for SCRIPT in run_pipeline.py fincrime_pipeline.py; do
   else
     log_error "$SCRIPT not found locally!"
   fi
+  
 done
-
 
 INPUT_URI="$EXPORT_BUCKET/transactions_sample.csv"
 EXPORT_URI="$EXPORT_BUCKET/fincrime_output/"
