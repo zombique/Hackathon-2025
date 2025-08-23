@@ -39,7 +39,7 @@ log_info "Using Region: $REGION"
 log_info "Using Service Account: $SERVICE_ACCOUNT"
 
 # ==================================================
-# 2. Buckets (keep them until manual cleanup)
+# 2. Buckets (unique per run)
 # ==================================================
 UNIQUE_ID=$(date +%s)
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root-${UNIQUE_ID}"
@@ -64,14 +64,16 @@ else
   log_error "transactions_sample.csv not found locally!"
 fi
 
-if [ -f "run_pipeline_auto.py" ]; then
-  log_info "Uploading run_pipeline_auto.py to $STAGING_BUCKET"
-  gsutil cp "run_pipeline_auto.py" "$STAGING_BUCKET/"
-else
-  log_error "run_pipeline_auto.py not found locally!"
-fi
+for SCRIPT in run_pipeline_auto.py fincrime_pipeline.py; do
+  if [ -f "$SCRIPT" ]; then
+    log_info "Uploading $SCRIPT to $STAGING_BUCKET"
+    gsutil cp "$SCRIPT" "$STAGING_BUCKET/"
+  else
+    log_error "$SCRIPT not found locally!"
+  fi
+done
 
-# Correct requirements.txt
+# Write corrected requirements.txt
 cat > requirements.txt <<EOF
 python-json-logger==2.0.7
 kfp==2.5.0
@@ -123,14 +125,17 @@ workerPoolSpecs:
         - bash
         - -c
         - |
+          echo "Installing python-json-logger first..." && \
+          pip install --no-cache-dir python-json-logger==2.0.7 || true && \
+          rm -f \$(python3 -c "import site; print(site.getsitepackages()[0])")/sitecustomize.py || true && \
           echo "Installing dependencies..." && \
           python3 -m pip install --upgrade pip setuptools wheel && \
           gsutil cp $STAGING_BUCKET/requirements.txt . && \
           pip install --no-cache-dir --use-pep517 -r requirements.txt && \
           pip uninstall -y google-cloud-datastore || true && \
-          rm -f \$(python3 -c "import site; print(site.getsitepackages()[0])")/sitecustomize.py || true && \
           echo "Downloading pipeline files from $STAGING_BUCKET" && \
           gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
+          gsutil cp $STAGING_BUCKET/fincrime_pipeline.py . && \
           gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . || true && \
           echo "Compiling pipeline..." && \
           python3 fincrime_pipeline.py && \
