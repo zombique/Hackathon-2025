@@ -86,15 +86,17 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2","pyarrow","google-cloud-aiplatform"],
+    packages_to_install=["pandas==2.2.2","pyarrow","google-cloud-aiplatform","google-generativeai"],
 )
 def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
     import pandas as pd, json
-    from vertexai.generative_models import GenerativeModel
+    import google.generativeai as genai
     import vertexai
+    import os
 
     vertexai.init(project=project, location=location)
-    model = GenerativeModel("gemini-2.5-flash-lite")
+    genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
+    model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
     df = pd.read_parquet(prompts.path)
     results = []
