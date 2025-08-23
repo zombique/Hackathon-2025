@@ -60,7 +60,8 @@ JOB_ID=$(gcloud ai custom-jobs create \
   --region="$REGION" \
   --display-name="$JOB_NAME" \
   --format="value(name)" \
-  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/python:3.10,replica-count=1,command="bash","-c","pip install -r $STAGING_BUCKET/code/requirements.txt && python $STAGING_BUCKET/code/run_pipeline_auto.py --project=$PROJECT_ID --region=$REGION --staging-bucket=$STAGING_BUCKET --gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv --export-uri=$OUTPUT_BUCKET/fincrime_output/ --model=gemini-1.5-flash")
+  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/python:3.10,replica-count=1,script="$STAGING_BUCKET/code/run_pipeline_auto.py",requirements="$STAGING_BUCKET/code/requirements.txt" \
+  --args="--project=$PROJECT_ID","--region=$REGION","--staging-bucket=$STAGING_BUCKET","--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv","--export-uri=$OUTPUT_BUCKET/fincrime_output/","--model=gemini-1.5-flash")
 
 echo "✅ INFO: Custom Job submitted: $JOB_ID"
 echo "📡 Streaming logs... (Ctrl+C to stop)"

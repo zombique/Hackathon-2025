@@ -1,53 +1,44 @@
-import os
+#!/usr/bin/env python3
+import argparse
 import sys
-import subprocess
-from google.cloud import storage
-
-def sync_from_gcs():
-    """Download latest code + pipeline files from GCS bucket before running."""
-    project_id = os.environ.get("PROJECT_ID") or sys.argv[sys.argv.index("--project")+1]
-    staging_bucket = os.environ.get("STAGING_BUCKET") or sys.argv[sys.argv.index("--staging-bucket")+1]
-
-    bucket_name = staging_bucket.replace("gs://", "").split("/")[0]
-    prefix = "code/"
-
-    print(f"✅ INFO: Syncing latest code from {staging_bucket}/{prefix} ...")
-    client = storage.Client(project=project_id)
-    bucket = client.bucket(bucket_name)
-
-    blobs = bucket.list_blobs(prefix=prefix)
-    for blob in blobs:
-        filename = blob.name.split("/")[-1]
-        if filename:
-            print(f"⬇️ Downloading {filename}")
-            blob.download_to_filename(filename)
-
-# run sync before pipeline execution
-sync_from_gcs()
-
-# --- continue with normal pipeline runner ---
 from google.cloud import aiplatform
 
-def run_pipeline(project, region, staging_bucket, gcs_input_uri, export_uri, model):
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run FinCrime pipeline on Vertex AI")
+    parser.add_argument("--project", required=True, help="GCP Project ID")
+    parser.add_argument("--region", required=True, help="GCP Region")
+    parser.add_argument("--staging-bucket", required=True, help="Staging GCS bucket")
+    parser.add_argument("--gcs-input-uri", required=True, help="Input CSV file (GCS path)")
+    parser.add_argument("--export-uri", required=True, help="Export location in GCS")
+    parser.add_argument("--model", default="gemini-1.5-flash", help="Model to use")
+    return parser.parse_args()
+
+def run_pipeline(args):
+    print("🚀 [run_pipeline_auto.py] Starting FinCrime Pipeline")
+    print(f"   ✅ Project: {args.project}")
+    print(f"   ✅ Region: {args.region}")
+    print(f"   ✅ Staging Bucket: {args.staging_bucket}")
+    print(f"   ✅ Input CSV: {args.gcs_input_uri}")
+    print(f"   ✅ Output Path: {args.export_uri}")
+    print(f"   ✅ Model: {args.model}")
+    sys.stdout.flush()
+
+    aiplatform.init(project=args.project, location=args.region, staging_bucket=args.staging_bucket)
+
     job = aiplatform.PipelineJob(
-        display_name="fincrime-pipeline",
-        template_path="fincrime_pipeline.yaml",
-        pipeline_root=staging_bucket,
+        display_name="fincrime_pipeline",
+        template_path=f"{args.staging_bucket}/code/fincrime_pipeline.yaml",
         parameter_values={
-            "gcs_input_uri": gcs_input_uri,
-            "export_uri": export_uri,
-            "model": model,
+            "gcs_input_uri": args.gcs_input_uri,
+            "export_uri": args.export_uri,
+            "model": args.model,
         },
     )
+
+    print("📡 Submitting pipeline job to Vertex AI...")
     job.run(sync=True)
+    print("🎉 Pipeline completed successfully!")
 
 if __name__ == "__main__":
-    args = {k.split("=")[0].lstrip("--"): k.split("=")[1] for k in sys.argv[1:]}
-    run_pipeline(
-        project=args["project"],
-        region=args["region"],
-        staging_bucket=args["staging-bucket"],
-        gcs_input_uri=args["gcs-input-uri"],
-        export_uri=args["export-uri"],
-        model=args["model"],
-    )
+    args = parse_args()
+    run_pipeline(args)
