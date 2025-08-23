@@ -12,7 +12,7 @@ from kfp.dsl import (Dataset, Input, Output, component, pipeline)
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2", "pyarrow", "gcsfs"],
+    packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
 )
 def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     import pandas as pd
@@ -28,6 +28,7 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
+    # ✅ Keep required + optional if present
     optional_cols = [
         "industry","transaction_type","channel",
         "customer_segment","relationship_length","product"
@@ -93,13 +94,13 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
     import vertexai
 
     vertexai.init(project=project, location=location)
-    model_instance = GenerativeModel(model)
+    model = GenerativeModel(model)
 
     df = pd.read_parquet(prompts.path)
     results = []
 
     for _, row in df.iterrows():
-        resp = model_instance.generate_content(row["prompt"])
+        resp = model.generate_content(row["prompt"])
         try:
             parsed = json.loads(resp.candidates[0].content.parts[0].text)
         except Exception:
@@ -139,30 +140,24 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     summary = df.groupby("risk_level").size().reset_index(name="count")
     summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False)
 
-    if "reasons" in df.columns:
-        df["reasons"] = df["reasons"].apply(lambda x: x if isinstance(x, list) else [x])
-        exploded = df.explode("reasons")
-        reason_counts = (
-            exploded.groupby("reasons")
-            .size()
-            .reset_index(name="count")
-            .sort_values("count", ascending=False)
-        )
-        reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
+    exploded = df.explode("reasons")
+    reason_counts = exploded.groupby("reasons").size().reset_index(name="count").sort_values("count", ascending=False)
+    reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
 
 
 # -------------------------
 # Pipeline Definition
 # -------------------------
 @dsl.pipeline(
-    name="fincrime-risk-pipeline"
+    name="fincrime-risk-pipeline",
+    pipeline_root="gs://your-artifact-bucket/pipeline-root"
 )
-def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str, model: str = "gemini-1.5-flash"):
-    raw = extract_transactions(gcs_input_uri=gcs_input_uri).set_cpu_limit("2").set_memory_limit("4Gi")
-    prompts = build_prompts(transactions=raw.outputs["output"]).set_cpu_limit("2").set_memory_limit("4Gi")
-    scored = llm_score(prompts=prompts.outputs["output"], project=project, location=location, model=model).set_cpu_limit("2").set_memory_limit("8Gi")
-    persist_outputs(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri).set_cpu_limit("1").set_memory_limit("2Gi")
-    generate_dashboard(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri).set_cpu_limit("1").set_memory_limit("2Gi")
+def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str, model: str):
+    raw = extract_transactions(gcs_input_uri=gcs_input_uri)
+    prompts = build_prompts(transactions=raw.outputs["output"])
+    scored = llm_score(prompts=prompts.outputs["output"], project=project, location=location, model=model)
+    persist_outputs(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
+    generate_dashboard(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
 
 
 # -------------------------
