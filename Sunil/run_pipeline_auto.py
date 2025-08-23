@@ -1,44 +1,58 @@
-#!/usr/bin/env python3
 import argparse
-import sys
 from google.cloud import aiplatform
+from kfp.v2 import compiler
+import os
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Run FinCrime pipeline on Vertex AI")
-    parser.add_argument("--project", required=True, help="GCP Project ID")
-    parser.add_argument("--region", required=True, help="GCP Region")
-    parser.add_argument("--staging-bucket", required=True, help="Staging GCS bucket")
-    parser.add_argument("--gcs-input-uri", required=True, help="Input CSV file (GCS path)")
-    parser.add_argument("--export-uri", required=True, help="Export location in GCS")
-    parser.add_argument("--model", default="gemini-1.5-flash", help="Model to use")
-    return parser.parse_args()
+import fincrime_pipeline  # 🔑 make sure fincrime_pipeline.py is uploaded alongside this script
 
-def run_pipeline(args):
-    print("🚀 [run_pipeline_auto.py] Starting FinCrime Pipeline")
-    print(f"   ✅ Project: {args.project}")
-    print(f"   ✅ Region: {args.region}")
-    print(f"   ✅ Staging Bucket: {args.staging_bucket}")
-    print(f"   ✅ Input CSV: {args.gcs_input_uri}")
-    print(f"   ✅ Output Path: {args.export_uri}")
-    print(f"   ✅ Model: {args.model}")
-    sys.stdout.flush()
+def run_pipeline(project, region, staging_bucket, gcs_input_uri, export_uri, model):
+    aiplatform.init(project=project, location=region, staging_bucket=staging_bucket)
 
-    aiplatform.init(project=args.project, location=args.region, staging_bucket=args.staging_bucket)
+    # --- Compile pipeline inline ---
+    compiled_path = "fincrime_pipeline.yaml"
+    print("🛠 Compiling pipeline...")
+    compiler.Compiler().compile(
+        pipeline_func=fincrime_pipeline.fincrime_pipeline,
+        package_path=compiled_path,
+    )
 
+    # Upload compiled YAML to staging bucket
+    gcs_yaml_path = f"{staging_bucket}/code/{compiled_path}"
+    print(f"📤 Uploading {compiled_path} to {gcs_yaml_path} ...")
+    os.system(f"gsutil cp {compiled_path} {gcs_yaml_path}")
+
+    # --- Submit pipeline job ---
     job = aiplatform.PipelineJob(
-        display_name="fincrime_pipeline",
-        template_path=f"{args.staging_bucket}/code/fincrime_pipeline.yaml",
+        display_name="fincrime-pipeline",
+        template_path=gcs_yaml_path,
+        pipeline_root=staging_bucket,
         parameter_values={
-            "gcs_input_uri": args.gcs_input_uri,
-            "export_uri": args.export_uri,
-            "model": args.model,
+            "input_csv": gcs_input_uri,
+            "export_uri": export_uri,
+            "model": model,
         },
     )
 
-    print("📡 Submitting pipeline job to Vertex AI...")
+    print("🚀 Launching FinCrime pipeline...")
     job.run(sync=True)
-    print("🎉 Pipeline completed successfully!")
+
 
 if __name__ == "__main__":
-    args = parse_args()
-    run_pipeline(args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--project", required=True)
+    parser.add_argument("--region", required=True)
+    parser.add_argument("--staging-bucket", required=True)
+    parser.add_argument("--gcs-input-uri", required=True)
+    parser.add_argument("--export-uri", required=True)
+    parser.add_argument("--model", required=True)
+
+    args = parser.parse_args()
+
+    run_pipeline(
+        project=args.project,
+        region=args.region,
+        staging_bucket=args.staging_bucket,
+        gcs_input_uri=args.gcs_input_uri,
+        export_uri=args.export_uri,
+        model=args.model,
+    )

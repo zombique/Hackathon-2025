@@ -52,7 +52,10 @@ gsutil cp fincrime_pipeline.py "$STAGING_BUCKET/code/" || true
 gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET/code/" || true
 gsutil cp requirements.txt "$STAGING_BUCKET/code/" || true
 
-# --- SUBMIT CUSTOM JOB ---
+SCRIPT_PATH="$STAGING_BUCKET/code/run_pipeline_auto.py"
+REQS_PATH="$STAGING_BUCKET/code/requirements.txt"
+
+# --- SUBMIT CUSTOM JOB (SCRIPT MODE + requirements) ---
 echo "✅ INFO: Submitting Custom Job to Vertex AI..."
 
 JOB_ID=$(gcloud ai custom-jobs create \
@@ -60,11 +63,10 @@ JOB_ID=$(gcloud ai custom-jobs create \
   --region="$REGION" \
   --display-name="$JOB_NAME" \
   --format="value(name)" \
-  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/python:3.10,replica-count=1,script="$STAGING_BUCKET/code/run_pipeline_auto.py",requirements="$STAGING_BUCKET/code/requirements.txt" \
+  --worker-pool-spec=replica-count=1,machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-15:latest,script=$SCRIPT_PATH,requirements=$REQS_PATH \
   --args="--project=$PROJECT_ID","--region=$REGION","--staging-bucket=$STAGING_BUCKET","--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv","--export-uri=$OUTPUT_BUCKET/fincrime_output/","--model=gemini-1.5-flash")
 
 echo "✅ INFO: Custom Job submitted: $JOB_ID"
 echo "📡 Streaming logs... (Ctrl+C to stop)"
 
-# --- STREAM LOGS ---
 gcloud ai custom-jobs stream-logs "$JOB_ID" --project="$PROJECT_ID" --region="$REGION"
