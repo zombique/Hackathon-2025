@@ -1,66 +1,52 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# Detect Project ID
-PROJECT_ID=$(gcloud config get-value project 2>/dev/null)
-if [ -z "$PROJECT_ID" ]; then
-  echo "❌ ERROR: No GCP project set. Run: gcloud config set project YOUR_PROJECT_ID"
-  exit 1
-fi
+echo "🚀 Starting FinCrime Pipeline end-to-end on Vertex AI"
+LOG_FILE="run_pipeline.log"
+exec > >(tee -a "$LOG_FILE") 2>&1
 
-# Try to detect region automatically
-REGION=$(gcloud config get-value compute/region 2>/dev/null)
+# --- CONFIG ---
+PROJECT_ID=$(gcloud config get-value project)
+REGION=$(gcloud config get-value compute/region 2>/dev/null || echo "asia-southeast1")
+JOB_NAME="fincrime-pipeline-job-$(date +%s)"
 
-# If not set, try default Compute Engine zone -> region
-if [ -z "$REGION" ]; then
-  ZONE=$(gcloud config get-value compute/zone 2>/dev/null)
-  if [ -n "$ZONE" ]; then
-    REGION=$(echo "$ZONE" | sed 's/-[a-z]$//')
-  fi
-fi
-
-# If still not set, fallback to asia-southeast1
-if [ -z "$REGION" ]; then
-  REGION="asia-southeast1"
-fi
-
-# Fixed (reusable) bucket names
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root"
 OUTPUT_BUCKET="gs://${PROJECT_ID}-fincrime-outputs"
 
 echo "✅ INFO: Using Project: $PROJECT_ID"
 echo "✅ INFO: Using Region: $REGION"
-echo "✅ INFO: Staging Bucket: $STAGING_BUCKET"
-echo "✅ INFO: Output Bucket: $OUTPUT_BUCKET"
+echo "✅ INFO: Job Name: $JOB_NAME"
 
-# Create buckets only if missing
-if ! gsutil ls "$STAGING_BUCKET" >/dev/null 2>&1; then
+# Ensure buckets exist
+if ! gsutil ls -b "$STAGING_BUCKET" >/dev/null 2>&1; then
+  echo "ℹ️ Creating staging bucket: $STAGING_BUCKET"
   gsutil mb -l "$REGION" "$STAGING_BUCKET"
 else
-  echo "ℹ️ Reusing existing bucket: $STAGING_BUCKET"
+  echo "ℹ️ Reusing existing staging bucket: $STAGING_BUCKET"
 fi
 
-if ! gsutil ls "$OUTPUT_BUCKET" >/dev/null 2>&1; then
+if ! gsutil ls -b "$OUTPUT_BUCKET" >/dev/null 2>&1; then
+  echo "ℹ️ Creating output bucket: $OUTPUT_BUCKET"
   gsutil mb -l "$REGION" "$OUTPUT_BUCKET"
 else
-  echo "ℹ️ Reusing existing bucket: $OUTPUT_BUCKET"
+  echo "ℹ️ Reusing existing output bucket: $OUTPUT_BUCKET"
 fi
 
-# Upload pipeline + runner + requirements
-gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET"/
-gsutil cp run_pipeline_auto.py "$STAGING_BUCKET"/
-gsutil cp requirements.txt "$STAGING_BUCKET"/
-
-# Upload sample CSV if not already present
+# Upload CSV if not already present
 if ! gsutil ls "$OUTPUT_BUCKET/transactions_sample.csv" >/dev/null 2>&1; then
-  gsutil cp transactions_sample.csv "$OUTPUT_BUCKET"/
+  echo "✅ Uploading transactions_sample.csv to $OUTPUT_BUCKET"
+  gsutil cp transactions_sample.csv "$OUTPUT_BUCKET/"
 else
-  echo "ℹ️ Reusing existing input CSV in $OUTPUT_BUCKET"
+  echo "ℹ️ Reusing existing transactions_sample.csv in $OUTPUT_BUCKET"
 fi
 
-# Submit Vertex AI Custom Job
+# --- SUBMIT CUSTOM JOB DIRECTLY WITH LOCAL CODE ---
+echo "✅ INFO: Submitting Custom Job to Vertex AI..."
 gcloud ai custom-jobs create \
   --region="$REGION" \
-  --display-name=fincrime-pipeline-job \
-  --worker-pool-spec=machine-type=n1-standard-4,replica-count=1,executor-image-uri=asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest \
+  --display-name="$JOB_NAME" \
+  --worker-pool-spec=machine-type=n1-standard-4,replica-count=1,executor-image-uri=asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest,local-package-path=.,python-module=run_pipeline_auto \
   --args="--project=$PROJECT_ID,--region=$REGION,--staging-bucket=$STAGING_BUCKET,--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv,--export-uri=$OUTPUT_BUCKET/fincrime_output/,--model=gemini-1.5-flash"
+
+echo "✅ Job submitted: $JOB_NAME"
+echo "👉 Track logs: gcloud ai custom-jobs stream-logs --region=$REGION $JOB_NAME"
