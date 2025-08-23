@@ -78,12 +78,18 @@ else
   log_error "run_pipeline_auto.py not found locally!"
 fi
 
-if [ -f "requirements.txt" ]; then
-  log_info "Uploading requirements.txt to $STAGING_BUCKET"
-  gsutil cp "requirements.txt" "$STAGING_BUCKET/"
-else
-  log_error "requirements.txt not found locally!"
-fi
+# Always regenerate fixed requirements.txt before upload
+cat > requirements.txt <<EOF
+python-json-logger==2.0.7
+kfp==2.14.2
+google-cloud-storage==2.19.0
+google-cloud-aiplatform==1.110.0
+pandas==2.3.2
+protobuf==3.20.3
+EOF
+
+log_info "Uploading corrected requirements.txt to $STAGING_BUCKET"
+gsutil cp "requirements.txt" "$STAGING_BUCKET/"
 
 INPUT_URI="$EXPORT_BUCKET/transactions_sample.csv"
 EXPORT_URI="$EXPORT_BUCKET/fincrime_output/"
@@ -109,7 +115,7 @@ else
 fi
 
 # ==================================================
-# 5. Create Custom Job YAML with requirements.txt
+# 5. Create Custom Job YAML
 # ==================================================
 CUSTOM_JOB_YAML="custom_job.yaml"
 
@@ -125,9 +131,11 @@ workerPoolSpecs:
         - -c
         - |
           echo "Installing dependencies..." && \
+          python3 -m pip install --upgrade pip setuptools wheel && \
           gsutil cp $STAGING_BUCKET/requirements.txt . && \
           pip install --no-cache-dir --use-pep517 -r requirements.txt && \
           pip uninstall -y google-cloud-datastore || true && \
+          rm -f \$(python3 -c "import site; print(site.getsitepackages()[0])")/sitecustomize.py || true && \
           echo "Downloading pipeline files from $STAGING_BUCKET" && \
           gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
           gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . && \
