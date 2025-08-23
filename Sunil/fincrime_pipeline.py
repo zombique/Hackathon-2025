@@ -86,7 +86,7 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 # -------------------------
 @component(
     base_image="python:3.10",
-    packages_to_install=["pandas==2.2.2","google-cloud-aiplatform"],
+    packages_to_install=["pandas==2.2.2","pyarrow","google-cloud-aiplatform"],
 )
 def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
     import pandas as pd, json
