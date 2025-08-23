@@ -18,7 +18,7 @@ echo "✅ INFO: Using Project: $PROJECT"
 echo "✅ INFO: Using Region: $REGION"
 echo "✅ INFO: Using Service Account: $SERVICE_ACCOUNT"
 
-# Buckets (add random suffix to avoid conflicts)
+# Buckets (unique suffix to avoid conflicts)
 SUFFIX=$(date +%s)
 STAGING_BUCKET="gs://${PROJECT}-fincrime-pipeline-root-${SUFFIX}"
 OUTPUT_BUCKET="gs://${PROJECT}-fincrime-outputs-${SUFFIX}"
@@ -44,28 +44,38 @@ echo "✅ INFO: Compiling pipeline with python3 fincrime_pipeline.py"
 python3 fincrime_pipeline.py
 echo "✅ INFO: Generated Vertex AI Pipeline spec at fincrime_pipeline.yaml"
 
-# Upload required scripts and YAML so container can use them
-echo "✅ INFO: Uploading pipeline spec and launcher script to staging bucket"
+# Upload pipeline + runner script to staging bucket
+echo "✅ INFO: Uploading pipeline spec and runner script to staging bucket"
 gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET/"
 gsutil cp run_pipeline_auto.py "$STAGING_BUCKET/"
 
-# Generate Custom Job YAML
+# Generate Custom Job YAML using containerSpec
 cat > custom_job.yaml <<EOF
 workerPoolSpecs:
   - machineSpec:
       machineType: n1-standard-4
     replicaCount: 1
-    pythonPackageSpec:
-      executorImageUri: asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
-      packageUris: []
-      pythonModule: run_pipeline_auto
+    containerSpec:
+      imageUri: asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest
+      command:
+        - /bin/bash
+        - -c
       args:
-        --project=${PROJECT}
-        --region=${REGION}
-        --staging-bucket=${STAGING_BUCKET}
-        --gcs-input-uri=${INPUT_URI}
-        --export-uri=${EXPORT_URI}
-        --model=gemini-1.5-flash
+        - |
+          set -e
+          echo "✅ Installing dependencies..."
+          pip install --no-cache-dir google-cloud-aiplatform kfp==2.5.0 python-json-logger pandas
+          echo "✅ Downloading pipeline + runner script..."
+          gsutil cp ${STAGING_BUCKET}/run_pipeline_auto.py .
+          gsutil cp ${STAGING_BUCKET}/fincrime_pipeline.yaml .
+          echo "✅ Launching pipeline..."
+          python3 run_pipeline_auto.py \
+            --project=${PROJECT} \
+            --region=${REGION} \
+            --staging-bucket=${STAGING_BUCKET} \
+            --gcs-input-uri=${INPUT_URI} \
+            --export-uri=${EXPORT_URI} \
+            --model=gemini-1.5-flash
 EOF
 
 echo "✅ INFO: Generated Vertex AI Custom Job YAML at custom_job.yaml"
