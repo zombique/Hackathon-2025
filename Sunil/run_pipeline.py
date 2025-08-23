@@ -27,6 +27,8 @@ def run_pipeline(project_id: str,
     )
 
     print("Submitting pipeline job: fincrime-pipeline-run")
+    job.run(sync=False)
+    print("✅ Pipeline submitted successfully!")
   
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FinCrime pipeline on Vertex AI")
