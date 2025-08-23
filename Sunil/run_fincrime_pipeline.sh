@@ -107,13 +107,20 @@ fi
 
 # ---- Run pipeline ----
 echo "Running pipeline on Vertex AI..."
-python3 run_pipeline.py \
+JOB_ID=$(python3 run_pipeline.py \
   --project "$PROJECT_ID" \
   --region "$REGION" \
   --staging-bucket "$STAGING_BUCKET" \
   --input-uri "$INPUT_URI" \
   --export-uri "$EXPORT_URI" \
   --pipeline-spec fincrime_pipeline.yaml \
-  --model "$MODEL"
+  --model "$MODEL" | grep 'stream-logs' | awk '{print $5}')
+
+if [ -n "$JOB_ID" ]; then
+  echo "📡 Streaming logs for job: $JOB_ID ..."
+  gcloud ai custom-jobs stream-logs "$JOB_ID" --project="$PROJECT_ID" --region="$REGION"
+else
+  log_error "Failed to capture JOB_ID from run_pipeline.py output"
+fi
 
 echo "✅ Pipeline submitted! Monitor in Vertex AI Console (Project: $PROJECT_ID, Region: $REGION)"

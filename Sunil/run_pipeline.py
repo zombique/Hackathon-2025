@@ -27,12 +27,7 @@ def run_pipeline(project_id: str,
     )
 
     print("Submitting pipeline job: fincrime-pipeline-run")
-    job.run(sync=False)
-    print("✅ Pipeline submitted successfully!")
-    print(f"👉 To stream logs, run:\n"
-          f"gcloud ai custom-jobs stream-logs {job.job_id} "
-          f"--project={project_id} --region={region}")
-
+  
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FinCrime pipeline on Vertex AI")
     parser.add_argument("--project", required=True, help="GCP project ID")
