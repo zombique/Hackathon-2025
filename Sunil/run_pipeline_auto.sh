@@ -1,13 +1,17 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
 echo "🚀 Starting FinCrime Pipeline end-to-end on Vertex AI"
-LOG_FILE="run_pipeline.log"
-exec > >(tee -a "$LOG_FILE") 2>&1
 
 # --- CONFIG ---
-PROJECT_ID=$(gcloud config get-value project)
-REGION=$(gcloud config get-value compute/region 2>/dev/null || echo "asia-southeast1")
+PROJECT_ID=$(gcloud config get-value project 2>/dev/null || echo "")
+REGION=$(gcloud config get-value ai/region 2>/dev/null || echo "")
+if [[ -z "$REGION" ]]; then
+  REGION=$(gcloud config get-value compute/region 2>/dev/null || echo "")
+fi
+if [[ -z "$REGION" ]]; then
+  REGION="asia-southeast1"   # ✅ fallback
+fi
 JOB_NAME="fincrime-pipeline-job-$(date +%s)"
 
 STAGING_BUCKET="gs://${PROJECT_ID}-fincrime-pipeline-root"
@@ -17,36 +21,49 @@ echo "✅ INFO: Using Project: $PROJECT_ID"
 echo "✅ INFO: Using Region: $REGION"
 echo "✅ INFO: Job Name: $JOB_NAME"
 
-# Ensure buckets exist
-if ! gsutil ls -b "$STAGING_BUCKET" >/dev/null 2>&1; then
-  echo "ℹ️ Creating staging bucket: $STAGING_BUCKET"
-  gsutil mb -l "$REGION" "$STAGING_BUCKET"
-else
+# --- BUCKETS ---
+if gsutil ls -b "$STAGING_BUCKET" >/dev/null 2>&1; then
   echo "ℹ️ Reusing existing staging bucket: $STAGING_BUCKET"
+else
+  echo "✅ INFO: Creating staging bucket: $STAGING_BUCKET"
+  gsutil mb -l "$REGION" "$STAGING_BUCKET"
 fi
 
-if ! gsutil ls -b "$OUTPUT_BUCKET" >/dev/null 2>&1; then
-  echo "ℹ️ Creating output bucket: $OUTPUT_BUCKET"
-  gsutil mb -l "$REGION" "$OUTPUT_BUCKET"
-else
+if gsutil ls -b "$OUTPUT_BUCKET" >/dev/null 2>&1; then
   echo "ℹ️ Reusing existing output bucket: $OUTPUT_BUCKET"
-fi
-
-# Upload CSV if not already present
-if ! gsutil ls "$OUTPUT_BUCKET/transactions_sample.csv" >/dev/null 2>&1; then
-  echo "✅ Uploading transactions_sample.csv to $OUTPUT_BUCKET"
-  gsutil cp transactions_sample.csv "$OUTPUT_BUCKET/"
 else
-  echo "ℹ️ Reusing existing transactions_sample.csv in $OUTPUT_BUCKET"
+  echo "✅ INFO: Creating output bucket: $OUTPUT_BUCKET"
+  gsutil mb -l "$REGION" "$OUTPUT_BUCKET"
 fi
 
-# --- SUBMIT CUSTOM JOB DIRECTLY WITH LOCAL CODE ---
+# --- INPUT FILE ---
+if gsutil ls "$OUTPUT_BUCKET/transactions_sample.csv" >/dev/null 2>&1; then
+  echo "ℹ️ Reusing existing transactions_sample.csv in $OUTPUT_BUCKET"
+else
+  echo "✅ INFO: Uploading transactions_sample.csv"
+  gsutil cp transactions_sample.csv "$OUTPUT_BUCKET/"
+fi
+
+# --- UPLOAD CODE FILES (always overwrite so they're fresh) ---
+echo "✅ INFO: Uploading pipeline code to $STAGING_BUCKET/code/"
+gsutil cp run_pipeline_auto.py "$STAGING_BUCKET/code/run_pipeline_auto.py"
+gsutil cp fincrime_pipeline.py "$STAGING_BUCKET/code/fincrime_pipeline.py" || true
+gsutil cp fincrime_pipeline.yaml "$STAGING_BUCKET/code/fincrime_pipeline.yaml" || true
+gsutil cp requirements.txt "$STAGING_BUCKET/code/requirements.txt"
+
+# --- SUBMIT CUSTOM JOB ---
 echo "✅ INFO: Submitting Custom Job to Vertex AI..."
-gcloud ai custom-jobs create \
+
+JOB_ID=$(gcloud ai custom-jobs create \
+  --project="$PROJECT_ID" \
   --region="$REGION" \
   --display-name="$JOB_NAME" \
-  --worker-pool-spec=machine-type=n1-standard-4,replica-count=1,executor-image-uri=asia-docker.pkg.dev/vertex-ai/training/tf-cpu.2-17.py310:latest,local-package-path=.,python-module=run_pipeline_auto \
-  --args="--project=$PROJECT_ID,--region=$REGION,--staging-bucket=$STAGING_BUCKET,--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv,--export-uri=$OUTPUT_BUCKET/fincrime_output/,--model=gemini-1.5-flash"
+  --format="value(name)" \
+  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/scikit-learn-cpu.1-0:latest,local-package-path=.,python-module=run_pipeline_auto \
+  --args="--project=$PROJECT_ID","--region=$REGION","--staging-bucket=$STAGING_BUCKET","--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv","--export-uri=$OUTPUT_BUCKET/fincrime_output/","--model=gemini-1.5-flash")
 
-echo "✅ Job submitted: $JOB_NAME"
-echo "👉 Track logs: gcloud ai custom-jobs stream-logs --region=$REGION $JOB_NAME"
+echo "✅ INFO: Custom Job submitted: $JOB_ID"
+echo "📡 Streaming logs... (Ctrl+C to stop)"
+
+# --- STREAM LOGS ---
+gcloud ai custom-jobs stream-logs "$JOB_ID" --project="$PROJECT_ID" --region="$REGION"
