@@ -1,72 +1,53 @@
 import os
+import sys
 import subprocess
+from google.cloud import storage
+
+def sync_from_gcs():
+    """Download latest code + pipeline files from GCS bucket before running."""
+    project_id = os.environ.get("PROJECT_ID") or sys.argv[sys.argv.index("--project")+1]
+    staging_bucket = os.environ.get("STAGING_BUCKET") or sys.argv[sys.argv.index("--staging-bucket")+1]
+
+    bucket_name = staging_bucket.replace("gs://", "").split("/")[0]
+    prefix = "code/"
+
+    print(f"✅ INFO: Syncing latest code from {staging_bucket}/{prefix} ...")
+    client = storage.Client(project=project_id)
+    bucket = client.bucket(bucket_name)
+
+    blobs = bucket.list_blobs(prefix=prefix)
+    for blob in blobs:
+        filename = blob.name.split("/")[-1]
+        if filename:
+            print(f"⬇️ Downloading {filename}")
+            blob.download_to_filename(filename)
+
+# run sync before pipeline execution
+sync_from_gcs()
+
+# --- continue with normal pipeline runner ---
 from google.cloud import aiplatform
 
-def install_requirements_from_gcs(bucket_uri: str):
-    """
-    Download requirements.txt from GCS and install it.
-    """
-    req_path = "/tmp/requirements.txt"
-    try:
-        print(f"✅ Downloading requirements.txt from {bucket_uri}")
-        subprocess.run(
-            ["gsutil", "cp", f"{bucket_uri}/code/requirements.txt", req_path],
-            check=True
-        )
-        print("✅ Installing dependencies from requirements.txt")
-        subprocess.run(
-            ["pip", "install", "--no-cache-dir", "-r", req_path],
-            check=True
-        )
-    except Exception as e:
-        print(f"⚠️ Skipping requirements install (error: {e})")
-
-def run_pipeline(project: str, region: str, staging_bucket: str,
-                 gcs_input_uri: str, export_uri: str, model: str):
-
-    print("🚀 Launching FinCrime pipeline...")
-
-    # Define pipeline job
+def run_pipeline(project, region, staging_bucket, gcs_input_uri, export_uri, model):
     job = aiplatform.PipelineJob(
         display_name="fincrime-pipeline",
         template_path="fincrime_pipeline.yaml",
         pipeline_root=staging_bucket,
         parameter_values={
-            "project": project,
-            "region": region,
             "gcs_input_uri": gcs_input_uri,
             "export_uri": export_uri,
             "model": model,
         },
     )
-
     job.run(sync=True)
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--project", required=True)
-    parser.add_argument("--region", required=True)
-    parser.add_argument("--staging-bucket", required=True)
-    parser.add_argument("--gcs-input-uri", required=True)
-    parser.add_argument("--export-uri", required=True)
-    parser.add_argument("--model", required=True)
-
-    args = parser.parse_args()
-
-    # ✅ Install requirements before running pipeline
-    install_requirements_from_gcs(args.staging_bucket)
-
-    # ✅ Initialize Vertex AI
-    aiplatform.init(project=args.project, location=args.region, staging_bucket=args.staging_bucket)
-
-    # ✅ Run pipeline
+    args = {k.split("=")[0].lstrip("--"): k.split("=")[1] for k in sys.argv[1:]}
     run_pipeline(
-        project=args.project,
-        region=args.region,
-        staging_bucket=args.staging_bucket,
-        gcs_input_uri=args.gcs_input_uri,
-        export_uri=args.export_uri,
-        model=args.model,
+        project=args["project"],
+        region=args["region"],
+        staging_bucket=args["staging-bucket"],
+        gcs_input_uri=args["gcs-input-uri"],
+        export_uri=args["export-uri"],
+        model=args["model"],
     )
