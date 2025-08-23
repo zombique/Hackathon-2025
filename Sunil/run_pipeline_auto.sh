@@ -127,6 +127,7 @@ workerPoolSpecs:
           echo "Installing dependencies..." && \
           gsutil cp $STAGING_BUCKET/requirements.txt . && \
           pip install --no-cache-dir --use-pep517 -r requirements.txt && \
+          pip uninstall -y google-cloud-datastore || true && \
           echo "Downloading pipeline files from $STAGING_BUCKET" && \
           gsutil cp $STAGING_BUCKET/run_pipeline_auto.py . && \
           gsutil cp $STAGING_BUCKET/fincrime_pipeline.yaml . && \
