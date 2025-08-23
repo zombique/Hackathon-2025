@@ -10,7 +10,7 @@ if [[ -z "$REGION" ]]; then
   REGION=$(gcloud config get-value compute/region 2>/dev/null || echo "")
 fi
 if [[ -z "$REGION" ]]; then
-  REGION="asia-southeast1"   # ✅ fallback region
+  REGION="asia-southeast1"   # ✅ fallback
 fi
 JOB_NAME="fincrime-pipeline-job-$(date +%s)"
 
@@ -46,8 +46,11 @@ fi
 
 # --- PACKAGE CODE ---
 echo "✅ INFO: Packaging pipeline code..."
-tar -czf fincrime_code.tar.gz run_pipeline_auto.py fincrime_pipeline.py requirements.txt fincrime_pipeline.yaml
-gsutil cp fincrime_code.tar.gz "$STAGING_BUCKET/code/fincrime_code.tar.gz"
+rm -f fincrime_code.tar.gz
+tar -czf fincrime_code.tar.gz run_pipeline_auto.py fincrime_pipeline.py fincrime_pipeline.yaml requirements.txt
+
+echo "✅ INFO: Uploading package to $STAGING_BUCKET/code/"
+gsutil cp fincrime_code.tar.gz "$STAGING_BUCKET/code/"
 
 # --- SUBMIT CUSTOM JOB ---
 echo "✅ INFO: Submitting Custom Job to Vertex AI..."
@@ -58,7 +61,7 @@ JOB_ID=$(gcloud ai custom-jobs create \
   --display-name="$JOB_NAME" \
   --format="value(name)" \
   --python-package-uris="$STAGING_BUCKET/code/fincrime_code.tar.gz" \
-  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/scikit-learn-cpu.1-0:latest,python-module=run_pipeline_auto \
+  --worker-pool-spec=machine-type=n1-standard-4,executor-image-uri=us-docker.pkg.dev/vertex-ai/training/python:3.10,python-module=run_pipeline_auto,requirements=requirements.txt \
   --args="--project=$PROJECT_ID","--region=$REGION","--staging-bucket=$STAGING_BUCKET","--gcs-input-uri=$OUTPUT_BUCKET/transactions_sample.csv","--export-uri=$OUTPUT_BUCKET/fincrime_output/","--model=gemini-1.5-flash")
 
 echo "✅ INFO: Custom Job submitted: $JOB_ID"
