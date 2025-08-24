@@ -92,10 +92,9 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
     import pandas as pd, json
     import google.generativeai as genai
     import vertexai
-    import os
 
     vertexai.init(project=project, location=location)
-    genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
+    genai.configure(api_key="AIzaSyDgWAxeD9jeMAWj6Xc6pg5h0CwtqNCLseQ")
     model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
     df = pd.read_parquet(prompts.path)
