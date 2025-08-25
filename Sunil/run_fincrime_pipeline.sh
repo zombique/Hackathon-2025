@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # Default model if not provided
-MODEL="${MODEL:-gemini-2.5-flash}"
+MODEL="${MODEL:-gemini-2.5-flash-lite}"
 
 LOG_FILE="run_pipeline.log"
 exec > >(tee -i $LOG_FILE) 2>&1

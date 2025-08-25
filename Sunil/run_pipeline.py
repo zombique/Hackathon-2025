@@ -8,7 +8,7 @@ def run_pipeline(project_id: str,
                  input_uri: str,
                  export_uri: str,
                  pipeline_spec: str = "fincrime_pipeline.yaml",
-                 model: str = "gemini-2.5-flash"):
+                 model: str = "gemini-2.5-flash-lite"):
     aiplatform.init(project=project_id,
                     location=region,
                     staging_bucket=staging_bucket)
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument("--input-uri", required=True, help="Input CSV/Parquet in GCS (gs://...)")
     parser.add_argument("--export-uri", required=True, help="Output folder in GCS (gs://...)")
     parser.add_argument("--pipeline-spec", default="fincrime_pipeline.yaml", help="Path to compiled pipeline YAML")
-    parser.add_argument("--model", default="gemini-2.5-flash", help="Generative model to use (e.g.gemini-2.5-flash")
+    parser.add_argument("--model", default="gemini-2.5-flash-lite", help="Generative model to use (e.g.gemini-2.5-flash-lite")
 
     args = parser.parse_args()
     run_pipeline(
