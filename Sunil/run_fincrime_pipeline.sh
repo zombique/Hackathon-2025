@@ -117,3 +117,23 @@ python3 run_pipeline.py \
   --model "$MODEL"
 
 echo "✅ Pipeline submitted! Monitor in Vertex AI Console (Project: $PROJECT_ID, Region: $REGION)"
+
+# ==================================================
+# 5. Stream logs from the latest Custom Job
+# ==================================================
+echo "📡 Fetching latest Vertex AI Custom Job ID..."
+JOB_ID=$(gcloud ai custom-jobs list \
+  --region="$REGION" \
+  --project="$PROJECT_ID" \
+  --sort-by=createTime \
+  --limit=1 \
+  --format="value(name)")
+
+if [ -n "$JOB_ID" ]; then
+  echo "📑 Streaming logs for Job ID: $JOB_ID"
+  gcloud ai custom-jobs stream-logs "$JOB_ID" \
+    --region="$REGION" \
+    --project="$PROJECT_ID"
+else
+  echo "❌ ERROR: Could not fetch Job ID!"
+fi
