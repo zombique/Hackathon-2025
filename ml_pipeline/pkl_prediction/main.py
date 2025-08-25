@@ -18,7 +18,7 @@ def preprocess_features(df):
     """
     Compute features expected by the model:
     - amount_log: log-transformed amount
-    - same_industry: flag if originator_desc == beneficiary_desc
+    - same_industry: flag if originator_id == beneficiary_id
     """
     print("Preprocessing features...")
     
@@ -28,11 +28,11 @@ def preprocess_features(df):
     else:
         raise KeyError("'amount' column is missing in CSV")
     
-    if 'originator_desc' in df.columns and 'beneficiary_desc' in df.columns:
-        df['same_industry'] = (df['originator_desc'] == df['beneficiary_desc']).astype(int)
+    if 'originator_id' in df.columns and 'beneficiary_id' in df.columns:
+        df['same_industry'] = (df['originator_id'] == df['beneficiary_id']).astype(int)
         print("Created 'same_industry'")
     else:
-        raise KeyError("'originator_desc' or 'beneficiary_desc' column is missing in CSV")
+        raise KeyError("'originator_id' or 'beneficiary_id' column is missing in CSV")
     
     return df
 
@@ -89,7 +89,7 @@ def process_transaction_file(event, context):
         df = pd.read_csv(temp_file.name)
         print(f"Downloaded file, shape: {df.shape}")
     
-    # Preprocess features
+    # Preprocess features (adds amount_log & same_industry)
     df = preprocess_features(df)
     
     # Load model
@@ -97,6 +97,15 @@ def process_transaction_file(event, context):
     
     # Predict
     df_pred = predict_transaction(df, model)
+    
+    # Remove engineering-only columns from output
+    drop_cols = ['amount_log', 'same_industry']
+    df_pred = df_pred.drop(columns=[c for c in drop_cols if c in df_pred.columns])
+    
+    # Ensure transaction_id is included (if present in input)
+    if 'transaction_id' in df.columns:
+        keep_cols = ['transaction_id'] + [c for c in df_pred.columns if c != 'transaction_id']
+        df_pred = df_pred[keep_cols]
     
     # Save result to output bucket
     output_blob_name = f"{OUTPUT_FOLDER}/predicted_{file_name}"  # include folder in blob path
@@ -108,4 +117,3 @@ def process_transaction_file(event, context):
         output_blob.upload_from_filename(temp_output.name)
     
     print(f"Predicted file saved to gs://{OUTPUT_BUCKET}/{output_blob_name}")
-
