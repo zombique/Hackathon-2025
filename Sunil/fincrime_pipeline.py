@@ -54,6 +54,10 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
     logging.info("🚀 Starting Build Prompts")
 
     df = pd.read_parquet(transactions.path)
+
+    # ✅ Only include transactions with prediction == 1
+    df = df[df["prediction"] == 1]
+
     prompts = []
     for _, row in df.iterrows():
         context_parts = [f"{col}: {row[col]}" for col in df.columns if col != "transaction_id"]
