@@ -90,12 +90,12 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 )
 def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
     import pandas as pd, json
-    #import google.generativeai as genai
+
     from vertexai.generative_models import GenerativeModel
     import vertexai
 
     vertexai.init(project=project, location=location)
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     df = pd.read_parquet(prompts.path)
     results = []

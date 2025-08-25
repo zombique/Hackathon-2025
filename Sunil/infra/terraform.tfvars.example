@@ -1,6 +1,0 @@
-project_id = "YOUR_PROJECT_ID"
-region = "us-central1"
-artifact_bucket = "YOUR_EXISTING_ARTIFACT_BUCKET"
-transactions_bucket = "YOUR_EXISTING_TRANSACTIONS_BUCKET"
-function_zip_object = "function_src.zip"
-model = "gemini-1.5-flash"

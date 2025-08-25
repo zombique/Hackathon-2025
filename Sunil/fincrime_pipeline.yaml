@@ -233,7 +233,7 @@ deploymentSpec:
           \ str, location: str, model: str):\n    import pandas as pd, json\n    import\
           \ google.generativeai as genai\n    import vertexai\n\n    vertexai.init(project=project,\
           \ location=location)\n    genai.configure(api_key=\"AIzaSyCSkIuoFvFgYvyiDexYQ7qkkMHhC8uRz2g\"\
-          )\n    model = genai.GenerativeModel(\"gemini-2.0-flash\")\n\n    df = pd.read_parquet(prompts.path)\n\
+          )\n    model = genai.GenerativeModel(\"gemini-2.5-flash\")\n\n    df = pd.read_parquet(prompts.path)\n\
           \    results = []\n\n    for _, row in df.iterrows():\n        resp = model.generate_content(row[\"\
           prompt\"])\n        try:\n            parsed = json.loads(resp.candidates[0].content.parts[0].text)\n\
           \        except Exception:\n            parsed = {\"risk_level\": \"UNKNOWN\"\
