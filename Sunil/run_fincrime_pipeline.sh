@@ -6,17 +6,24 @@
 
 set -euo pipefail
 
+# Colors
+RED="\\033[0;31m"
+GREEN="\\033[0;32m"
+YELLOW="\\033[1;33m"
+NC="\\033[0m" # No Color
+
 # Default model if not provided
 MODEL="${MODEL:-gemini-2.5-flash}"
 
 LOG_FILE="run_pipeline.log"
 exec > >(tee -i $LOG_FILE) 2>&1
 
-echo "🚀 Starting FinCrime Pipeline end-to-end on Vertex AI"
-echo "📝 Logging to $LOG_FILE"
+echo -e "${YELLOW}🚀 Starting FinCrime Pipeline end-to-end on Vertex AI${NC}"
+echo -e "${YELLOW}📝 Logging to $LOG_FILE${NC}"
 
-log_info()  { echo "✅ INFO: $1"; }
-log_error() { echo "❌ ERROR: $1"; exit 1; }
+log_info()  { echo -e "${GREEN}✅ INFO:${NC} $1"; }
+log_warn()  { echo -e "${YELLOW}⚠️ WARN:${NC} $1"; }
+log_error() { echo -e "${RED}❌ ERROR:${NC} $1"; exit 1; }
 
 # ==================================================
 # 1. Get GCP Project & Region
@@ -79,7 +86,6 @@ for SCRIPT in run_pipeline.py fincrime_pipeline.py; do
   else
     log_error "$SCRIPT not found locally!"
   fi
-  
 done
 
 INPUT_URI="$EXPORT_BUCKET/transactions_sample.csv"
@@ -106,7 +112,7 @@ else
 fi
 
 # ---- Run pipeline ----
-echo "Running pipeline on Vertex AI..."
+echo -e "${YELLOW}▶ Running pipeline on Vertex AI...${NC}"
 python3 run_pipeline.py \
   --project "$PROJECT_ID" \
   --region "$REGION" \
@@ -116,24 +122,36 @@ python3 run_pipeline.py \
   --pipeline-spec fincrime_pipeline.yaml \
   --model "$MODEL"
 
-echo "✅ Pipeline submitted! Monitor in Vertex AI Console (Project: $PROJECT_ID, Region: $REGION)"
+echo -e "${GREEN}✅ Pipeline submitted!${NC} Monitor in Vertex AI Console (Project: $PROJECT_ID, Region: $REGION)"
 
 # ==================================================
 # 5. Stream logs from the latest Custom Job
 # ==================================================
-echo "📡 Fetching latest Vertex AI Custom Job ID..."
-JOB_ID=$(gcloud ai custom-jobs list \
-  --region="$REGION" \
-  --project="$PROJECT_ID" \
-  --sort-by=createTime \
-  --limit=1 \
-  --format="value(name)")
+echo -e \"${YELLOW}📡 Fetching latest Vertex AI Custom Job ID...${NC}\"
+JOB_ID=$(gcloud ai custom-jobs list \\
+  --region=\"$REGION\" \\
+  --project=\"$PROJECT_ID\" \\
+  --sort-by=createTime \\
+  --limit=1 \\
+  --format=\"value(name)\")
 
-if [ -n "$JOB_ID" ]; then
-  echo "📑 Streaming logs for Job ID: $JOB_ID"
-  gcloud ai custom-jobs stream-logs "$JOB_ID" \
-    --region="$REGION" \
-    --project="$PROJECT_ID"
+if [ -n \"$JOB_ID\" ]; then
+  echo -e \"${YELLOW}📑 Streaming logs for Job ID: $JOB_ID${NC}\"
+  gcloud ai custom-jobs stream-logs \"$JOB_ID\" \\
+    --region=\"$REGION\" \\
+    --project=\"$PROJECT_ID\"
+
+  STATUS=$(gcloud ai custom-jobs describe \"$JOB_ID\" \\
+    --region=\"$REGION\" --project=\"$PROJECT_ID\" \\
+    --format=\"value(state)\")
+
+  if [ \"$STATUS\" != \"JOB_STATE_SUCCEEDED\" ]; then
+    echo -e \"${RED}❌ Pipeline FAILED with status: $STATUS${NC}\"
+    exit 1
+  else
+    echo -e \"${GREEN}✅ Pipeline finished successfully${NC}\"
+  fi
 else
-  echo "❌ ERROR: Could not fetch Job ID!"
+  echo -e \"${RED}❌ ERROR: Could not fetch Job ID!${NC}\"
+  exit 1
 fi
