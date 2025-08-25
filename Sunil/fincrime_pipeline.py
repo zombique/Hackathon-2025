@@ -7,11 +7,16 @@ import kfp
 from kfp import dsl
 from kfp.dsl import (Dataset, Input, Output, component, pipeline)
 
-# ANSI Colors for logs
-RED = "\033[91m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-RESET = "\033[0m"
+# -------------------------
+# Helper for ANSI colors
+# -------------------------
+def get_colors():
+    return {
+        "RED": "\033[91m",
+        "GREEN": "\033[92m",
+        "YELLOW": "\033[93m",
+        "RESET": "\033[0m"
+    }
 
 # -------------------------
 # Component 1: Extract Transactions from GCS
@@ -22,8 +27,9 @@ RESET = "\033[0m"
 )
 def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     import pandas as pd, logging
+    colors = get_colors()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    logging.info(f"{YELLOW}🚀 Starting Extract Transactions{RESET}")
+    logging.info(f"{colors['YELLOW']}🚀 Starting Extract Transactions{colors['RESET']}")
 
     df = pd.read_csv(gcs_input_uri) if gcs_input_uri.endswith(".csv") else pd.read_parquet(gcs_input_uri)
 
@@ -34,7 +40,7 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     ]
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
-        logging.error(f"{RED}❌ Missing required columns: {missing}{RESET}")
+        logging.error(f"{colors['RED']}❌ Missing required columns: {missing}{colors['RESET']}")
         raise ValueError(f"Missing required columns: {missing}")
 
     optional_cols = [
@@ -45,7 +51,7 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     df = df[keep_cols]
 
     df.to_parquet(output.path, index=False)
-    logging.info(f"{GREEN}✅ Extract step completed successfully, rows={len(df)}{RESET}")
+    logging.info(f"{colors['GREEN']}✅ Extract step completed successfully, rows={len(df)}{colors['RESET']}")
 
 # -------------------------
 # Component 2: Build Prompts
@@ -56,8 +62,9 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
 )
 def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
     import pandas as pd, logging
+    colors = get_colors()
     logging.basicConfig(level=logging.INFO)
-    logging.info(f"{YELLOW}🚀 Starting Build Prompts{RESET}")
+    logging.info(f"{colors['YELLOW']}🚀 Starting Build Prompts{colors['RESET']}")
 
     df = pd.read_parquet(transactions.path)
     prompts = []
@@ -90,7 +97,7 @@ Consider:
         prompts.append({"transaction_id": row["transaction_id"], "prompt": prompt})
 
     pd.DataFrame(prompts).to_parquet(output.path, index=False)
-    logging.info(f"{GREEN}✅ Build Prompts completed, prompts={len(prompts)}{RESET}")
+    logging.info(f"{colors['GREEN']}✅ Build Prompts completed, prompts={len(prompts)}{colors['RESET']}")
 
 # -------------------------
 # Component 3: LLM Scoring
@@ -104,8 +111,9 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
     import vertexai
     from vertexai.generative_models import GenerativeModel
 
+    colors = get_colors()
     logging.basicConfig(level=logging.INFO)
-    logging.info(f"{YELLOW}🚀 Starting LLM Scoring{RESET}")
+    logging.info(f"{colors['YELLOW']}🚀 Starting LLM Scoring{colors['RESET']}")
 
     vertexai.init(project=project, location=location)
     model_instance = GenerativeModel(model)
@@ -122,7 +130,7 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
 
             if resp.candidates and resp.candidates[0].content.parts:
                 raw_text = resp.candidates[0].content.parts[0].text.strip()
-                logging.info(f"{YELLOW}🔎 Raw model output for tx {row['transaction_id']}: {raw_text}{RESET}")
+                logging.info(f"{colors['YELLOW']}🔎 Raw model output for tx {row['transaction_id']}: {raw_text}{colors['RESET']}")
                 parsed = json.loads(raw_text)
             else:
                 raise ValueError("Empty response from model")
@@ -131,7 +139,7 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
                 parsed["reasons"] = " ".join(parsed["reasons"])
 
         except Exception as e:
-            logging.warning(f"{RED}⚠️ Parse error for transaction {row['transaction_id']}: {str(e)}{RESET}")
+            logging.warning(f"{colors['RED']}⚠️ Parse error for transaction {row['transaction_id']}: {str(e)}{colors['RESET']}")
             parsed = {
                 "risk_level": "UNKNOWN",
                 "reasons": f"parse_error: {str(e)}"
@@ -141,7 +149,7 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
         results.append(parsed)
 
     pd.DataFrame(results).to_parquet(output.path, index=False)
-    logging.info(f"{GREEN}✅ LLM Scoring completed, rows={len(results)}{RESET}")
+    logging.info(f"{colors['GREEN']}✅ LLM Scoring completed, rows={len(results)}{colors['RESET']}")
 
 # -------------------------
 # Component 4: Persist Outputs
@@ -152,13 +160,14 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
 )
 def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd, logging
+    colors = get_colors()
     logging.basicConfig(level=logging.INFO)
-    logging.info(f"{YELLOW}🚀 Starting Persist Outputs{RESET}")
+    logging.info(f"{colors['YELLOW']}🚀 Starting Persist Outputs{colors['RESET']}")
 
     df = pd.read_parquet(results.path)
     out_csv = gcs_export_uri.rstrip("/") + "/decisions.csv"
     df.to_csv(out_csv, index=False)
-    logging.info(f"{GREEN}✅ Outputs saved to {out_csv}{RESET}")
+    logging.info(f"{colors['GREEN']}✅ Outputs saved to {out_csv}{colors['RESET']}")
 
 # -------------------------
 # Component 5: Dashboard
@@ -169,14 +178,15 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
 )
 def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd, logging
+    colors = get_colors()
     logging.basicConfig(level=logging.INFO)
-    logging.info(f"{YELLOW}🚀 Starting Dashboard Generation{RESET}")
+    logging.info(f"{colors['YELLOW']}🚀 Starting Dashboard Generation{colors['RESET']}")
 
     df = pd.read_parquet(results.path)
 
     summary = df.groupby("risk_level").size().reset_index(name="count")
     summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False)
-    logging.info(f"{GREEN}✅ risk_summary.csv generated{RESET}")
+    logging.info(f"{colors['GREEN']}✅ risk_summary.csv generated{colors['RESET']}")
 
     reason_counts = (
         df.groupby("reasons")
@@ -185,7 +195,7 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
         .sort_values("count", ascending=False)
     )
     reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
-    logging.info(f"{GREEN}✅ reason_summary.csv generated{RESET}")
+    logging.info(f"{colors['GREEN']}✅ reason_summary.csv generated{colors['RESET']}")
 
 # -------------------------
 # Pipeline Definition
