@@ -94,7 +94,7 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
     import vertexai
 
     vertexai.init(project=project, location=location)
-    model = genai.GenerativeModel("gemini-2.5-flash-lite")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     df = pd.read_parquet(prompts.path)
     results = []
