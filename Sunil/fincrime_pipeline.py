@@ -20,9 +20,9 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     df = pd.read_csv(gcs_input_uri) if gcs_input_uri.endswith(".csv") else pd.read_parquet(gcs_input_uri)
 
     required_cols = [
-        "transaction_id","originator_company","beneficiary_company",
-        "amount","currency","date",
-        "originator_country","beneficiary_country","pattern"
+        "transaction_id", "originator_company", "originator_country", "beneficiary_company", 
+        "beneficiary_country","amount", "currency", "date", 
+        "originator_id", "originator_desc", "beneficiary_id", "beneficiary_desc","prediction"
     ]
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
