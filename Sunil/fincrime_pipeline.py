@@ -1,6 +1,6 @@
 # ==========================================================
 # Vertex AI FinCrime Pipeline - CSV-in / CSV-out
-# With Standard Logging (No ANSI Colors)
+# With Standard Logging
 # ==========================================================
 
 import kfp
@@ -60,7 +60,7 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 
     prompts = []
     for _, row in df.iterrows():
-        context_parts = [f"{col}: {row[col]}" for col in df.columns if col != "transaction_id"]
+        context_parts = [f"{col}: {row[col]}" for col in df.index if col not in ["transaction_id", "prompt"]]
         context = ", ".join(context_parts)
         prompt = f"""
 You are a FinCrime risk assistant. Given a transaction, decide if the transaction makes sense.
@@ -72,7 +72,8 @@ Return ONLY a strict JSON object with this schema:
 
 {{
   "risk_level": "LOW | MEDIUM | HIGH",
-  "reasons": "<one or two lines of consolidated text>"
+  "reasons": "<one or two lines of consolidated text>",
+  "rationale": "<short explanation of how you derived this decision>"
 }}
 
 Do not include any text outside the JSON.
@@ -85,7 +86,9 @@ Consider:
 - Channel-specific risk factors
 - Transaction type anomalies
 """
-        prompts.append({"transaction_id": row["transaction_id"], "prompt": prompt})
+        row_out = row.to_dict()
+        row_out["prompt"] = prompt
+        prompts.append(row_out)
 
     pd.DataFrame(prompts).to_parquet(output.path, index=False)
     logging.info(f"✅ Build Prompts completed, prompts={len(prompts)}")
@@ -128,14 +131,27 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
             if isinstance(parsed.get("reasons"), list):
                 parsed["reasons"] = " ".join(parsed["reasons"])
 
+            if "rationale" not in parsed:
+                parsed["rationale"] = ""
+
         except Exception as e:
             logging.warning(f"⚠️ Parse error for transaction {row['transaction_id']}: {str(e)}")
             parsed = {
                 "risk_level": "UNKNOWN",
-                "reasons": f"parse_error: {str(e)}"
+                "reasons": f"parse_error: {str(e)}",
+                "rationale": ""
             }
 
         parsed["transaction_id"] = row["transaction_id"]
+        parsed["originator_company"] = row.get("originator_company")
+        parsed["originator_country"] = row.get("originator_country")
+        parsed["beneficiary_company"] = row.get("beneficiary_company")
+        parsed["beneficiary_country"] = row.get("beneficiary_country")
+        parsed["originator_id"] = row.get("originator_id")
+        parsed["originator_desc"] = row.get("originator_desc")
+        parsed["beneficiary_id"] = row.get("beneficiary_id")
+        parsed["beneficiary_desc"] = row.get("beneficiary_desc")
+
         results.append(parsed)
 
     pd.DataFrame(results).to_parquet(output.path, index=False)
@@ -154,6 +170,16 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
     logging.info("🚀 Starting Persist Outputs")
 
     df = pd.read_parquet(results.path)
+
+    final_cols = [
+        "risk_level", "reasons", "rationale","transaction_id", 
+        "originator_company", "originator_country", 
+        "beneficiary_company", "beneficiary_country",
+        "originator_id", "originator_desc", 
+        "beneficiary_id", "beneficiary_desc"
+    ]
+
+    df = df[[c for c in final_cols if c in df.columns]]
     out_csv = gcs_export_uri.rstrip("/") + "/decisions.csv"
     df.to_csv(out_csv, index=False)
     logging.info(f"✅ Outputs saved to {out_csv}")
@@ -184,6 +210,15 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     )
     reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
     logging.info("✅ reason_summary.csv generated")
+
+    rationale_counts = (
+        df.groupby("rationale")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=False)
+    )
+    rationale_counts.to_csv(gcs_export_uri.rstrip("/") + "/rationale_summary.csv", index=False)
+    logging.info("✅ rationale_summary.csv generated")
 
 # -------------------------
 # Pipeline Definition
