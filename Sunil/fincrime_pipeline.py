@@ -59,14 +59,13 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
         context = ", ".join(context_parts)
 
         prompt = f"""
-        You are a FinCrime risk assistant. Given a transaction, decide if doing business is reasonable.
+        You are a FinCrime risk assistant. Given a transaction, decide if the transaction makes sense
 
         Transaction Details: {context}
-
+        
         Return ONLY strict JSON with fields:
         - risk_level (LOW | MEDIUM | HIGH)
-        - reasons (list of strings)
-        - suggested_actions (list of strings)
+        - reasons (one or two lines of consolidated text)
 
         Consider:
         - Sanctioned or high-risk regions
