@@ -1,6 +1,6 @@
 # ==========================================================
 # Vertex AI FinCrime Pipeline - CSV-in / CSV-out
-# With Optional Enrichment Columns for Richer Context
+# With Logging for Easier Debugging
 # ==========================================================
 
 import kfp
@@ -15,7 +15,9 @@ from kfp.dsl import (Dataset, Input, Output, component, pipeline)
     packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
 )
 def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
-    import pandas as pd
+    import pandas as pd, logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    logging.info("🚀 Starting Extract Transactions")
 
     df = pd.read_csv(gcs_input_uri) if gcs_input_uri.endswith(".csv") else pd.read_parquet(gcs_input_uri)
 
@@ -26,9 +28,9 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     ]
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
+        logging.error("❌ Missing required columns: %s", missing)
         raise ValueError(f"Missing required columns: {missing}")
 
-    # ✅ Keep required + optional if present
     optional_cols = [
         "purpose","industry","transaction_type","channel",
         "customer_segment","relationship_length","product"
@@ -37,113 +39,113 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     df = df[keep_cols]
 
     df.to_parquet(output.path, index=False)
-
+    logging.info("✅ Extract step completed successfully, rows=%d", len(df))
 
 # -------------------------
-# Component 2: Build Prompts for Gemini
+# Component 2: Build Prompts
 # -------------------------
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow"],
 )
 def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
-    import pandas as pd
+    import pandas as pd, logging
+    logging.basicConfig(level=logging.INFO)
+    logging.info("🚀 Starting Build Prompts")
 
     df = pd.read_parquet(transactions.path)
     prompts = []
     for _, row in df.iterrows():
-        context_parts = []
-        for col in df.columns:
-            if col not in ["transaction_id"]:
-                context_parts.append(f"{col}: {row[col]}")
+        context_parts = [f"{col}: {row[col]}" for col in df.columns if col != "transaction_id"]
         context = ", ".join(context_parts)
-
         prompt = f"""
         You are a FinCrime risk assistant. Given a transaction, decide if the transaction makes sense
 
         Transaction Details: {context}
-        
+
         Return ONLY strict JSON with fields:
         - risk_level (LOW | MEDIUM | HIGH)
         - reasons (one or two lines of consolidated text)
-
-        Consider:
-        - Sanctioned or high-risk regions
-        - Industry or customer profile mismatches
-        - Unusual amounts relative to segment/industry
-        - Cross-border and high-value red flags
-        - Channel-specific risk factors
-        - Transaction type anomalies
         """
         prompts.append({"transaction_id": row["transaction_id"], "prompt": prompt})
 
     pd.DataFrame(prompts).to_parquet(output.path, index=False)
-
+    logging.info("✅ Build Prompts completed, prompts=%d", len(prompts))
 
 # -------------------------
-# Component 3: LLM Scoring with Gemini
+# Component 3: LLM Scoring
 # -------------------------
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow","google-cloud-aiplatform","google-generativeai"],
 )
 def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
-    import pandas as pd, json
-
-    from vertexai.generative_models import GenerativeModel
+    import pandas as pd, json, logging
     import vertexai
+    from vertexai.generative_models import GenerativeModel
+
+    logging.basicConfig(level=logging.INFO)
+    logging.info("🚀 Starting LLM Scoring")
 
     vertexai.init(project=project, location=location)
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    model_instance = GenerativeModel(model)
+    logging.info("✅ Using model: %s", model)
 
     df = pd.read_parquet(prompts.path)
     results = []
 
     for _, row in df.iterrows():
-        resp = model.generate_content(row["prompt"])
         try:
+            resp = model_instance.generate_content(row["prompt"])
             parsed = json.loads(resp.candidates[0].content.parts[0].text)
-        except Exception:
-            parsed = {"risk_level": "UNKNOWN", "reasons": ["parse_error"], "suggested_actions": []}
+        except Exception as e:
+            logging.warning("⚠️ Parse error for transaction %s: %s", row["transaction_id"], str(e))
+            parsed = {"risk_level": "UNKNOWN", "reasons": ["parse_error"]}
         parsed["transaction_id"] = row["transaction_id"]
         results.append(parsed)
 
     pd.DataFrame(results).to_parquet(output.path, index=False)
-
+    logging.info("✅ LLM Scoring completed, rows=%d", len(results))
 
 # -------------------------
-# Component 4: Persist Outputs to GCS
+# Component 4: Persist Outputs
 # -------------------------
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
 )
 def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
-    import pandas as pd
+    import pandas as pd, logging
+    logging.basicConfig(level=logging.INFO)
+    logging.info("🚀 Starting Persist Outputs")
 
     df = pd.read_parquet(results.path)
     out_csv = gcs_export_uri.rstrip("/") + "/decisions.csv"
     df.to_csv(out_csv, index=False)
-
+    logging.info("✅ Outputs saved to %s", out_csv)
 
 # -------------------------
-# Component 5: Generate Dashboard CSVs
+# Component 5: Dashboard
 # -------------------------
 @component(
     base_image="python:3.10",
     packages_to_install=["pandas==2.2.2","pyarrow","gcsfs"],
 )
 def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
-    import pandas as pd
+    import pandas as pd, logging
+    logging.basicConfig(level=logging.INFO)
+    logging.info("🚀 Starting Dashboard Generation")
+
     df = pd.read_parquet(results.path)
 
     summary = df.groupby("risk_level").size().reset_index(name="count")
     summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False)
+    logging.info("✅ risk_summary.csv generated")
 
     exploded = df.explode("reasons")
     reason_counts = exploded.groupby("reasons").size().reset_index(name="count").sort_values("count", ascending=False)
     reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
-
+    logging.info("✅ reason_summary.csv generated")
 
 # -------------------------
 # Pipeline Definition
@@ -159,10 +161,6 @@ def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: st
     persist_outputs(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
     generate_dashboard(results=scored.outputs["output"], gcs_export_uri=gcs_export_uri)
 
-
-# -------------------------
-# Compile Entry Point
-# -------------------------
 if __name__ == "__main__":
     kfp.compiler.Compiler().compile(
         pipeline_func=pipeline,
