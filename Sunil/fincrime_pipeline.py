@@ -60,7 +60,10 @@ def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
 
     prompts = []
     for _, row in df.iterrows():
-        context_parts = [f"{col}: {row[col]}" for col in df.index if col not in ["transaction_id", "prompt"]]
+        context_parts = [
+            f"{col}: {row[col]}" for col in df.columns
+            if col not in ["transaction_id", "prompt"] and pd.notna(row[col]) and str(row[col]).strip() != ""
+        ]
         context = ", ".join(context_parts)
         prompt = f"""
 You are a FinCrime risk assistant. Given a transaction, decide if the transaction makes sense.
@@ -176,7 +179,7 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
         "originator_company", "originator_country", 
         "beneficiary_company", "beneficiary_country",
         "originator_id", "originator_desc", 
-        "beneficiary_id", "beneficiary_desc"
+        "beneficiary_id", "beneficiary_desc",
     ]
 
     df = df[[c for c in final_cols if c in df.columns]]
@@ -224,7 +227,7 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
 # Pipeline Definition
 # -------------------------
 @dsl.pipeline(
-    name="fincrime-risk-pipeline",
+    name="fincrime-risk-pipeline"
 )
 def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str, model: str):
     raw = extract_transactions(gcs_input_uri=gcs_input_uri)
