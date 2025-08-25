@@ -15,15 +15,16 @@ Run:
 pip install --upgrade google-cloud-aiplatform vertexai pandas requests tqdm python-dotenv tenacity streamlit plotly networkx pyvis
 
 2) Run pipeline to produce enriched_transactions.csv
-python vertex_ai_fincrime_pipeline.py --input_csv transactions.csv --output_csv enriched_transactions.csv --project $GCP_PROJECT --location $GCP_LOCATION
+python vertex_ai_fincrime_pipeline_dashboard.py --input_csv transactions.csv --output_csv enriched_transactions.csv 
 
 3) Launch dashboard
-streamlit run vertex_ai_fincrime_pipeline.py
+streamlit run vertex_ai_fincrime_pipeline_dashboard.py
 """
 from __future__ import annotations
 
 import argparse
 import os
+import sys
 import re
 import pandas as pd
 
@@ -98,7 +99,7 @@ def launch_dashboard(csv_path: str):
 
 # ---------------------------- CLI Pipeline ------------------------------------
 
-def run_pipeline(input_csv: str, output_csv: str, project: str, location: str) -> pd.DataFrame:
+def run_pipeline(input_csv: str, output_csv: str) -> pd.DataFrame:
     df = pd.read_csv(input_csv)
     # Stub: enrichment + Gemini scoring
     df["score"] = 80
@@ -112,13 +113,15 @@ def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--input_csv")
     p.add_argument("--output_csv")
-    p.add_argument("--project")
-    p.add_argument("--location", default="us-central1")
+
     return p.parse_args()
 
 
 def main():
-    if st._is_running_with_streamlit:
+    # Detect if running via `streamlit run ...`
+    running_with_streamlit = any("streamlit" in arg for arg in sys.argv)
+
+    if running_with_streamlit:
         default_csv = "enriched_transactions.csv"
         if not os.path.exists(default_csv):
             st.warning(f"No {default_csv} found. Please run pipeline first.")
@@ -126,8 +129,9 @@ def main():
             launch_dashboard(default_csv)
     else:
         args = parse_args()
-        run_pipeline(args.input_csv, args.output_csv, args.project, args.location)
+        run_pipeline(args.input_csv, args.output_csv)
         print(f"Enriched CSV written to {args.output_csv}")
 
 if __name__ == "__main__":
     main()
+
