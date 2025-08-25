@@ -190,7 +190,6 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
 # -------------------------
 @dsl.pipeline(
     name="fincrime-risk-pipeline",
-    pipeline_root="gs://your-artifact-bucket/pipeline-root"
 )
 def pipeline(project: str, location: str, gcs_input_uri: str, gcs_export_uri: str, model: str):
     raw = extract_transactions(gcs_input_uri=gcs_input_uri)
