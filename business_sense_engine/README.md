@@ -44,6 +44,7 @@ business_sense_engine/
 
 ### Setup
 
+```
 # From repo root
 cd business_sense_engine
 
@@ -58,37 +59,37 @@ source .venv/bin/activate
 pip install -r requirements.txt  # if present
 # or minimal:
 pip install pandas
+```
+### Run
 
-Run
+```python src/main.py```
 
-python src/main.py
+This will read the CSVs from `data/`, join the industries, apply the rules, and save `output/validated_transactions.csv`.
 
-This will read the CSVs from data/, join the industries, apply the rules, and save output/validated_transactions.csv.
+## 🧩 How it works (core logic)
 
-🧩 How it works (core logic)
+1. Load data
 
-Load data
+- `validatable_transactions.csv` with columns: `Originator_Name, Originator_SIC, Beneficiary_Name, Beneficiary_SIC, Amount, Currency, Transaction ID`
 
-validatable_transactions.csv with columns: Originator_Name, Originator_SIC, Beneficiary_Name, Beneficiary_SIC, Amount, Currency, Transaction ID
+- `fake_company_sic_nace_dataset.csv` with columns: `company_name, sic_nace_code, industry`
 
-fake_company_sic_nace_dataset.csv with columns: company_name, sic_nace_code, industry
+- `sample_sic_nace_codes.csv` (optional reference)
 
-sample_sic_nace_codes.csv (optional reference)
+2. Enrich: Left-join companies to transactions twice (for originator and beneficiary) to add `originator_industry` and `beneficiary_industry`.
 
-Enrich: Left-join companies to transactions twice (for originator and beneficiary) to add originator_industry and beneficiary_industry.
+3. Validate: For each row, evaluate `ALLOWED_RELATIONS`:
 
-Validate: For each row, evaluate ALLOWED_RELATIONS:
+- If either industry is missing → `Unknown`
 
-If either industry is missing → Unknown
+- If `(originator_industry → beneficiary_industry)` allowed → `Valid`
 
-If (originator_industry → beneficiary_industry) allowed → Valid
+- Otherwise → `Mismatch`
 
-Otherwise → Mismatch
-
-Write: Save the enriched file with match_verdict.
+4. Write: Save the enriched file with `match_verdict`.
 
 Example rule map (excerpt)
-
+```
 {
   "Semiconductor Manufacturing": ["Metal Product Manufacturing", "Chemical Manufacturing"],
   "Chemical Manufacturing": ["Hospital Activities", "Semiconductor Manufacturing"],
@@ -102,10 +103,10 @@ Example rule map (excerpt)
   "Advertising Agencies": ["Business Consulting"],
   "Cleaning Services": ["Hospital Activities", "Business Consulting"]
 }
+```
+Place as `src/rules.json` to override the defaults.
 
-Place as src/rules.json to override the defaults.
-
-🧪 Sample input → output
+## 🧪 Sample input → output
 
 Input (transactions): data/validatable_transactions.csvOutput (enriched): output/validated_transactions.csv with extra columns:
 
