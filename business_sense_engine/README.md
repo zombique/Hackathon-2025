@@ -105,57 +105,58 @@ Place as `src/rules.json` to override the defaults.
 
 ## 🧪 Sample input → output
 
-Input (transactions): data/validatable_transactions.csvOutput (enriched): output/validated_transactions.csv with extra columns:
+**Input (transactions):** `data/validatable_transactions.csv` 
+**Output (enriched):** `output/validated_transactions.csv` with extra columns:
 
-originator_sic, originator_industry, beneficiary_sic, beneficiary_industry, match_verdict
+   - `originator_sic`, `originator_industry`, `beneficiary_sic`, `beneficiary_industry`, `match_verdict`
 
-Tip: Filter Mismatch and Unknown in Excel/BI to show potential red flags.
+> Tip: Filter `Mismatch` and `Unknown` in Excel/BI/Dashboard to show potential red flags.
 
-🔌 Adding AI/ML (roadmap)
+## 🔌 Adding AI/ML (roadmap)
 
-LLM Scoring (RAG): Build a knowledge base of industry relationships from public sources; use an LLM to score plausibility → new column llm_score (0–1) + rationale.
+- **LLM Scoring (RAG):** Build a knowledge base of industry relationships from public sources; use an LLM to score plausibility → new column llm_score (0–1) + rationale.
 
-Anomaly Model: Train a simple classifier on historical labeled outcomes to predict sensible_vs_not. Start with Logistic Regression/XGBoost; graduate to Graph ML.
+- **Anomaly Model:** Train a simple classifier on historical labeled outcomes to predict sensible_vs_not. Start with Logistic Regression/XGBoost; graduate to Graph ML.
 
-Feedback Loop: Analysts correct verdicts in UI → captured as labels → nightly retrain → improved precision.
+- **Feedback Loop:** Analysts correct verdicts in UI → captured as labels → nightly retrain → improved precision.
 
-See docs/ai_plan.md (to be added) for step-by-step integration.
+See `docs/ai_plan.md` (to be added) for step-by-step integration.
 
-⚙️ Configuration
+## ⚙️ Configuration
 
-DATA_DIR / OUTPUT_DIR can be adjusted in src/main.py.
+- `DATA_DIR` / `OUTPUT_DIR` can be adjusted in `src/main.py`.
 
-Replace sample CSVs with your own, keeping header names consistent.
+- Replace sample CSVs with your own, keeping header names consistent.
 
-Externalize rules to src/rules.json for non-code updates.
+- Externalize rules to `src/rules.json` for non-code updates.
 
-🛡️ Security & Privacy
+## 🛡️ Security & Privacy
 
-The included datasets are fake/synthetic. Do not commit real customer data.
+- The included datasets are **fake/synthetic**. Do **not** commit real customer data.
 
-If adapting to real data, ensure masking, access controls, and audit logging per your policy.
+- If adapting to real data, ensure masking, access controls, and audit logging per your policy.
 
-🤝 Contributing
+## 🤝 Contributing
 
-Fork the repo
+1. Fork the repo
 
-Create a branch: git checkout -b feature/my-improvement
+2. Create a branch: `git checkout -b feature/my-improvement`
 
-Commit: git commit -m "feat: add my improvement"
+3. Commit: `git commit -m "feat: add my improvement"`
 
-Push & open a PR
+4. Push & open a PR
 
 For issues/ideas, open a GitHub Issue.
 
-📄 License
+## 📄 License (TBD)
 
-MIT (or your preferred license). Add a LICENSE file if not present.
+MIT (or your preferred license). Add a `LICENSE `file if not present.
 
-📸 Screenshots
+## 📸 Screenshots (TBD)
 
-Add screenshots of the dashboard, sample output, and the PPT visuals (Impact & Benefits) in /docs/images and embed them here.
+Add screenshots of the dashboard, sample output, and the PPT visuals (Impact & Benefits) in `/docs/images` and embed them here.
 
-🧭 Credits
+## 🧭 Credits
 
-Built during Hackathon 2025 by the Business Sense Engine team.
+Built during `Hackathon 2025` by the _**Daemon Mode**_ team.
 
