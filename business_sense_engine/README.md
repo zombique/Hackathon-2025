@@ -1,10 +1,10 @@
-## Business Sense Engine (Industry Match Validator)
+# Business Sense Engine (Industry Match Validator)
 
 A lightweight rules-first engine that validates whether two companies should reasonably be doing business together based on their SIC/NACE industry codes. It ingests transactions, enriches parties with industry data, applies a configurable relationship policy, and emits a verdict (Valid / Mismatch / Unknown) for each transaction.
 
 Perfect for AML/compliance triage, analyst assist, and data quality checks. Start simple with rules; plug in AI/ML later.
 
-✨ Key Features
+✨ **Key Features**
 
 Transaction enrichment: Joins originator/beneficiary to a fake company registry with sic_nace_code and industry.
 
@@ -14,11 +14,11 @@ Deterministic output: Valid, Mismatch, or Unknown per transaction with full colu
 
 Extensible: Designed to add RAG, LLM scoring, and ML models without changing the core flow.
 
-🧠 Why this exists
+🧠 **Why this exists**
 
 Compliance teams often rely on manual judgement to decide whether a payer/payee pairing is sensible. This project automates the first pass: Is the relationship consistent with expected industry behavior? That signal reduces noise and speeds investigations.
 
-🗂️ Repository Structure
+🗂️ **Repository Structure**
 
 business_sense_engine/
 ├─ data/
@@ -32,15 +32,15 @@ business_sense_engine/
 │  └─ rules.json                             # (Optional) Externalized ALLOWED_RELATIONS map
 └─ README.md
 
-If rules.json isn’t present, main.py falls back to the built‑in ALLOWED_RELATIONS dictionary.
+If `rules.json` isn’t present, `main.py` falls back to the built‑in `ALLOWED_RELATIONS` dictionary.
 
-🚀 Getting Started
+🚀 ## Getting Started
 
 Prerequisites
 
-Python 3.9+
+* Python 3.9+
 
-pip and (recommended) venv
+`pip` and (recommended) `venv`
 
 Setup
 
