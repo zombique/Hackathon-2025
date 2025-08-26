@@ -86,7 +86,7 @@ This will read the CSVs from `data/`, join the industries, apply the rules, and 
 4. Write: Save the enriched file with `match_verdict`.
 
 Example rule map (excerpt)
-```
+```json
 {
   "Semiconductor Manufacturing": ["Metal Product Manufacturing", "Chemical Manufacturing"],
   "Chemical Manufacturing": ["Hospital Activities", "Semiconductor Manufacturing"],
