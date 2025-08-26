@@ -1,4 +1,4 @@
-#Business Sense Engine (Industry Match Validator)
+## Business Sense Engine (Industry Match Validator)
 
 A lightweight rules-first engine that validates whether two companies should reasonably be doing business together based on their SIC/NACE industry codes. It ingests transactions, enriches parties with industry data, applies a configurable relationship policy, and emits a verdict (Valid / Mismatch / Unknown) for each transaction.
 
