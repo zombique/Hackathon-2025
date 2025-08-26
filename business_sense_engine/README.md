@@ -6,20 +6,20 @@ A lightweight rules-first engine that validates whether two companies should rea
 
 ## ✨ **Key Features**
 
-Transaction enrichment: Joins originator/beneficiary to a fake company registry with sic_nace_code and industry.
+* **Transaction enrichment:** Joins originator/beneficiary to a fake company registry with sic_nace_code and industry.
 
-Configurable policy: Rule-map of which industries may transact (e.g., Semiconductor Manufacturing ↔ Chemical Manufacturing).
+* **Configurable policy:** Rule-map of which industries may transact (e.g., Semiconductor Manufacturing ↔ Chemical Manufacturing).
 
-Deterministic output: Valid, Mismatch, or Unknown per transaction with full columns for auditing.
+* **Deterministic output:** Valid, Mismatch, or Unknown per transaction with full columns for auditing.
 
-Extensible: Designed to add RAG, LLM scoring, and ML models without changing the core flow.
+* **Extensible:** Designed to add RAG, LLM scoring, and ML models without changing the core flow.
 
-🧠 **Why this exists**
+# 🧠 **Why this exists**
 
-Compliance teams often rely on manual judgement to decide whether a payer/payee pairing is sensible. This project automates the first pass: Is the relationship consistent with expected industry behavior? That signal reduces noise and speeds investigations.
+Compliance teams often rely on manual judgement to decide whether a payer/payee pairing is sensible. This project automates the first pass: _Is the relationship consistent with expected industry behavior?_ That signal reduces noise and speeds investigations.
 
-🗂️ **Repository Structure**
-
+# 🗂️ **Repository Structure**
+```
 business_sense_engine/
 ├─ data/
 │  ├─ validatable_transactions.csv           # Sample transactions (originator/beneficiary + amounts)
@@ -31,18 +31,18 @@ business_sense_engine/
 │  ├─ main.py                                # Entry point: loads, merges, validates, writes output
 │  └─ rules.json                             # (Optional) Externalized ALLOWED_RELATIONS map
 └─ README.md
+```
+> If `rules.json` isn’t present, `main.py` falls back to the built‑in `ALLOWED_RELATIONS` dictionary.
 
-If `rules.json` isn’t present, `main.py` falls back to the built‑in `ALLOWED_RELATIONS` dictionary.
+## 🚀 Getting Started
 
-🚀 ## Getting Started
-
-Prerequisites
+### **Prerequisites**
 
 * Python 3.9+
 
-`pip` and (recommended) `venv`
+* `pip` and (recommended) `venv`
 
-Setup
+### Setup
 
 # From repo root
 cd business_sense_engine
