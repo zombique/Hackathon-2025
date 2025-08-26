@@ -2,7 +2,7 @@
 
 A lightweight rules-first engine that validates whether two companies should reasonably be doing business together based on their SIC/NACE industry codes. It ingests transactions, enriches parties with industry data, applies a configurable relationship policy, and emits a verdict (Valid / Mismatch / Unknown) for each transaction.
 
-Perfect for AML/compliance triage, analyst assist, and data quality checks. Start simple with rules; plug in AI/ML later.
+> Perfect for AML/compliance triage, analyst assist, and data quality checks. Start simple with rules; plug in AI/ML later.
 
 ✨ **Key Features**
 
