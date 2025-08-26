@@ -69,11 +69,8 @@ This will read the CSVs from `data/`, join the industries, apply the rules, and 
 ## 🧩 How it works (core logic)
 
 1. Load data
-
   - `validatable_transactions.csv` with columns: `Originator_Name, Originator_SIC, Beneficiary_Name, Beneficiary_SIC, Amount, Currency, Transaction ID`
-
   - `fake_company_sic_nace_dataset.csv` with columns: `company_name, sic_nace_code, industry`
-
   - `sample_sic_nace_codes.csv` (optional reference)
 
 2. Enrich: Left-join companies to transactions twice (for originator and beneficiary) to add `originator_industry` and `beneficiary_industry`.
