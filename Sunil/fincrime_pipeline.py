@@ -19,12 +19,22 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.info("🚀 Starting Extract Transactions")
 
-    df = pd.read_csv(gcs_input_uri) if gcs_input_uri.endswith(".csv") else pd.read_parquet(gcs_input_uri)
+    if gcs_input_uri.endswith(".csv"):
+        df = pd.read_csv(gcs_input_uri)
+    elif gcs_input_uri.endswith(".parquet"):
+        df = pd.read_parquet(gcs_input_uri)
+    else:
+        raise ValueError(f"Unsupported input file format: {gcs_input_uri}")
+
+    # Keep only prediction == 1
+    if "prediction" in df.columns:
+        df = df[df["prediction"] == 1]
+        df = df.drop(columns=["prediction"])
 
     required_cols = [
         "transaction_id", "originator_company", "originator_country", "beneficiary_company", 
         "beneficiary_country","amount", "currency", "date", 
-        "originator_id", "originator_desc", "beneficiary_id", "beneficiary_desc","prediction"
+        "originator_id", "originator_desc", "beneficiary_id", "beneficiary_desc"
     ]
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
@@ -50,13 +60,10 @@ def extract_transactions(gcs_input_uri: str, output: Output[Dataset]):
 )
 def build_prompts(transactions: Input[Dataset], output: Output[Dataset]):
     import pandas as pd, logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.info("🚀 Starting Build Prompts")
 
     df = pd.read_parquet(transactions.path)
-
-    # ✅ Only include transactions with prediction == 1
-    df = df[df["prediction"] == 1]
 
     prompts = []
     for _, row in df.iterrows():
@@ -106,9 +113,12 @@ Consider:
 def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, location: str, model: str):
     import pandas as pd, json, logging
     import vertexai
-    from vertexai.generative_models import GenerativeModel
+    try:
+        from vertexai.generative_models import GenerativeModel
+    except ImportError:
+        from vertexai.preview.generative_models import GenerativeModel
 
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.info("🚀 Starting LLM Scoring")
 
     vertexai.init(project=project, location=location)
@@ -169,7 +179,7 @@ def llm_score(prompts: Input[Dataset], output: Output[Dataset], project: str, lo
 )
 def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd, logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.info("🚀 Starting Persist Outputs")
 
     df = pd.read_parquet(results.path)
@@ -184,7 +194,7 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
 
     df = df[[c for c in final_cols if c in df.columns]]
     out_csv = gcs_export_uri.rstrip("/") + "/decisions.csv"
-    df.to_csv(out_csv, index=False)
+    df.to_csv(out_csv, index=False, storage_options={"token": "cloud"})
     logging.info(f"✅ Outputs saved to {out_csv}")
 
 # -------------------------
@@ -196,13 +206,13 @@ def persist_outputs(results: Input[Dataset], gcs_export_uri: str):
 )
 def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
     import pandas as pd, logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.info("🚀 Starting Dashboard Generation")
 
     df = pd.read_parquet(results.path)
 
     summary = df.groupby("risk_level").size().reset_index(name="count")
-    summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False)
+    summary.to_csv(gcs_export_uri.rstrip("/") + "/risk_summary.csv", index=False, storage_options={"token": "cloud"})
     logging.info("✅ risk_summary.csv generated")
 
     reason_counts = (
@@ -211,7 +221,7 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
         .reset_index(name="count")
         .sort_values("count", ascending=False)
     )
-    reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False)
+    reason_counts.to_csv(gcs_export_uri.rstrip("/") + "/reason_summary.csv", index=False, storage_options={"token": "cloud"})
     logging.info("✅ reason_summary.csv generated")
 
     rationale_counts = (
@@ -220,7 +230,7 @@ def generate_dashboard(results: Input[Dataset], gcs_export_uri: str):
         .reset_index(name="count")
         .sort_values("count", ascending=False)
     )
-    rationale_counts.to_csv(gcs_export_uri.rstrip("/") + "/rationale_summary.csv", index=False)
+    rationale_counts.to_csv(gcs_export_uri.rstrip("/") + "/rationale_summary.csv", index=False, storage_options={"token": "cloud"})
     logging.info("✅ rationale_summary.csv generated")
 
 # -------------------------
