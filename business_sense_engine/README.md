@@ -4,7 +4,7 @@ A lightweight rules-first engine that validates whether two companies should rea
 
 > Perfect for AML/compliance triage, analyst assist, and data quality checks. Start simple with rules; plug in AI/ML later.
 
-✨ **Key Features**
+✨ # **Key Features**
 
 Transaction enrichment: Joins originator/beneficiary to a fake company registry with sic_nace_code and industry.
 
