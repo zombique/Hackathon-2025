@@ -1,113 +1,185 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import matplotlib.pyplot as plt
 from pyvis.network import Network
-import networkx as nx
+import tempfile
+import streamlit.components.v1 as components
 
-# ---------------------
-# Config
-# ---------------------
-DECISIONS_CSV = "decisions.csv"
-RISK_SUMMARY_CSV = "risk_summary.csv"
-REASON_SUMMARY_CSV = "reason_summary.csv"
-RATIONALE_SUMMARY_CSV = "rationale_summary.csv"
-
-st.set_page_config(page_title="FinCrime Risk Dashboard", layout="wide")
-st.title("💼 FinCrime Risk Dashboard")
-
-# ---------------------
+# -----------------------------
 # Load Data
-# ---------------------
+# -----------------------------
 @st.cache_data
 def load_data():
-    decisions = pd.read_csv(DECISIONS_CSV)
-    risk_summary = pd.read_csv(RISK_SUMMARY_CSV)
-    reason_summary = pd.read_csv(REASON_SUMMARY_CSV)
-    rationale_summary = pd.read_csv(RATIONALE_SUMMARY_CSV)
-    return decisions, risk_summary, reason_summary, rationale_summary
+    df = pd.read_csv("decisions.csv")
+    return df
 
-decisions, risk_summary, reason_summary, rationale_summary = load_data()
+df = load_data()
 
-# ---------------------
+# -----------------------------
+# 🎨 Page Config
+# -----------------------------
+st.set_page_config(page_title="Business Sense Dashboard", layout="wide")
+
+st.title("🚨 Business Sense Engin Dashboard")
+
+# -----------------------------
 # Sidebar Filters
-# ---------------------
+# -----------------------------
 st.sidebar.header("🔎 Filters")
-selected_risks = st.sidebar.multiselect("Risk Level", options=decisions["risk_level"].unique(), default=list(decisions["risk_level"].unique()))
-selected_countries = st.sidebar.multiselect("Originator Country", options=decisions["originator_country"].dropna().unique(), default=list(decisions["originator_country"].dropna().unique()))
 
-filtered_decisions = decisions[
-    (decisions["risk_level"].isin(selected_risks)) &
-    (decisions["originator_country"].isin(selected_countries))
+risk_filter = st.sidebar.multiselect(
+    "Filter by Risk Level",
+    options=df["risk_level"].dropna().unique(),
+    default=list(df["risk_level"].dropna().unique())
+)
+
+country_filter = st.sidebar.multiselect(
+    "Filter by Originator Country",
+    options=df["originator_country"].dropna().unique(),
+    default=list(df["originator_country"].dropna().unique())
+)
+
+# Apply filters
+filtered_df = df[
+    (df["risk_level"].isin(risk_filter)) &
+    (df["originator_country"].isin(country_filter))
 ]
 
-# ---------------------
-# Risk Distribution Pie
-# ---------------------
-st.subheader("📊 Risk Distribution")
-fig_pie = px.pie(risk_summary, names="risk_level", values="count", color="risk_level", hole=0.4)
-st.plotly_chart(fig_pie, use_container_width=True)
+# -----------------------------
+# 📊 Risk Distribution + 🌍 Counterparty Network
+# -----------------------------
+st.subheader("📊 Risk Insights")
 
-# ---------------------
-# Top Reasons & Rationales (Stacked Section with Color Coding)
-# ---------------------
-st.subheader("🔎 Top Drivers of Risk")
+col1, col2 = st.columns([1, 2])  # Pie chart smaller, network larger
 
-st.markdown("#### 🔎 Top Risk Reasons")
-fig_reason = px.bar(
-    reason_summary.head(10),
-    x="count", y="reasons", orientation="h",
-    color="count", color_continuous_scale="Blues"
-)
-st.plotly_chart(fig_reason, use_container_width=True)
+# --- Pie Chart ---
+with col1:
+    st.markdown("**Risk Distribution**")
+    risk_counts = filtered_df["risk_level"].value_counts()
 
-st.markdown("#### 🧠 Top Rationales")
-fig_rationale = px.bar(
-    rationale_summary.head(10),
-    x="count", y="rationale", orientation="h",
-    color="count", color_continuous_scale="Greens"
-)
-st.plotly_chart(fig_rationale, use_container_width=True)
+    fig, ax = plt.subplots(figsize=(2.8, 2.8))   # Smaller size
+    ax.pie(
+        risk_counts,
+        labels=risk_counts.index,
+        autopct='%1.1f%%',
+        startangle=90,
+        textprops={'fontsize': 8}
+    )
+    ax.axis("equal")
+    st.pyplot(fig, use_container_width=False)
 
-# ---------------------
-# Counterparty Network (Colored, Sized & Tooltip Details)
-# ---------------------
-st.subheader("🌍 Counterparty Network")
-G = nx.from_pandas_edgelist(filtered_decisions, "originator_company", "beneficiary_company", create_using=nx.DiGraph())
+# --- Counterparty Network ---
+with col2:
+    st.markdown("**Counterparty Network**")
 
-# Calculate node transaction counts
-node_counts = {}
-for node in G.nodes():
-    node_counts[node] = G.degree(node)
+    net = Network(height="400px", width="100%", bgcolor="#ffffff", font_color="black")
 
-# Create PyVis network with risk coloring, sizing, and tooltips
-net = Network(height="500px", width="100%", bgcolor="#ffffff", font_color="black", directed=True)
+    for _, row in filtered_df.iterrows():
+        risk = row["risk_level"]
+        color = "green" if risk == "LOW" else "orange" if risk == "MEDIUM" else "red"
 
-risk_colors = {"LOW": "#90ee90", "MEDIUM": "#ffd700", "HIGH": "#ff4500"}
+        # Originator node with tooltip
+        net.add_node(
+            row["originator_company"],
+            label=row["originator_company"],
+            color=color,
+            title=(
+                f"<b>Originator:</b> {row['originator_company']}<br>"
+                f"<b>Country:</b> {row['originator_country']}<br>"
+                f"<b>Risk:</b> {risk}<br>"
+                f"<b>Reason:</b> {row.get('reasons','')}"
+            )
+        )
 
-for _, row in filtered_decisions.iterrows():
-    origin = row["originator_company"]
-    beneficiary = row["beneficiary_company"]
-    risk = row["risk_level"] if "risk_level" in row else "MEDIUM"
-    color = risk_colors.get(risk, "#87CEEB")
+        # Beneficiary node with tooltip
+        net.add_node(
+            row["beneficiary_company"],
+            label=row["beneficiary_company"],
+            color=color,
+            title=(
+                f"<b>Beneficiary:</b> {row['beneficiary_company']}<br>"
+                f"<b>Country:</b> {row['beneficiary_country']}<br>"
+                f"<b>Risk:</b> {risk}<br>"
+                f"<b>Reason:</b> {row.get('reasons','')}"
+            )
+        )
 
-    size_origin = 15 + node_counts.get(origin, 1) * 3
-    size_beneficiary = 15 + node_counts.get(beneficiary, 1) * 3
+        # Edge with tooltip
+        net.add_edge(
+            row["originator_company"],
+            row["beneficiary_company"],
+            title=f"Transaction Risk: {risk}"
+        )
 
-    # Tooltip info
-    origin_title = f"Company: {origin}<br>Country: {row['originator_country']}<br>Risk: {risk}"
-    beneficiary_title = f"Company: {beneficiary}<br>Country: {row['beneficiary_country']}<br>Risk: {risk}"
+    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
+    net.save_graph(tmp_file.name)
+    html_code = open(tmp_file.name, "r", encoding="utf-8").read()
+    st.components.v1.html(html_code, height=420, scrolling=True)
 
-    net.add_node(origin, label=origin, color=color, size=size_origin, title=origin_title)
-    net.add_node(beneficiary, label=beneficiary, color=color, size=size_beneficiary, title=beneficiary_title)
-    net.add_edge(origin, beneficiary, title=f"Transaction Risk: {risk}")
+    # Legend under the graph
+    st.markdown("""
+    <div style="margin-top:10px;">
+        <b>Legend:</b> 
+        <span style="color:green;">🟢 Low Risk</span> | 
+        <span style="color:orange;">🟠 Medium Risk</span> | 
+        <span style="color:red;">🔴 High Risk</span>
+    </div>
+    """, unsafe_allow_html=True)
 
-net.save_graph("network.html")
-st.components.v1.html(open("network.html").read(), height=520)
+# -----------------------------
+# 📋 Transactions Table
+# -----------------------------
+st.subheader("📋 Transactions Table")
 
-# ---------------------
-# Detailed Decisions Table
-# ---------------------
-st.subheader("📝 Detailed Decisions")
-search = st.text_input("Search transactions:")
-filtered = filtered_decisions[filtered_decisions.apply(lambda row: row.astype(str).str.contains(search, case=False).any(), axis=1)] if search else filtered_decisions
-st.dataframe(filtered, use_container_width=True)
+# Rename for readability
+filtered_df = filtered_df.rename(columns={
+    "risk_level": "Risk Level",
+    "reasons": "Reasons",
+    "rationale": "Rationale",
+    "transaction_id": "Transaction Id",
+    "originator_company": "Originator Company",
+    "originator_country": "Originator Country",
+    "beneficiary_company": "Beneficiary Company",
+    "beneficiary_country": "Beneficiary Country"
+})
+
+table_df = filtered_df[
+    ["Risk Level", "Reasons", "Rationale", "Transaction Id",
+     "Originator Company", "Originator Country",
+     "Beneficiary Company", "Beneficiary Country"]
+]
+
+# Styling
+css = """
+<style>
+.tx-table-wrap{
+  max-height: 600px; overflow-y: auto; border: 1px solid #e9ecef;
+  border-radius: 10px; background:#fff;
+  width: 100%;   /* take full width */
+  display: block;
+}
+table.tx-table{
+  width: 100%; min-width: 1200px;  /* auto expand width */
+  border-collapse: collapse; table-layout: auto;
+  font-size: 14px;
+}
+.tx-table thead th{
+  position: sticky; top: 0; z-index: 2;
+  background:#fafafa; text-align:center; font-weight:700; color:#000;
+  padding:10px; border-bottom:1px solid #e9ecef;
+}
+.tx-table thead th.head-green{ color:#15803d; }   /* green headers */
+.tx-table td{
+  vertical-align: top; padding:10px; border-top:1px solid #f0f0f0;
+  word-wrap: break-word; white-space: normal;
+}
+</style>
+"""
+
+# Build HTML
+html = table_df.to_html(index=False, classes="tx-table")
+html = html.replace("<th>Reasons</th>",   '<th class="head-green">Reasons</th>')
+html = html.replace("<th>Rationale</th>", '<th class="head-green">Rationale</th>')
+
+# Render
+components.html(css + f'<div class="tx-table-wrap">{html}</div>', height=600, scrolling=True)
