@@ -158,5 +158,5 @@ Add screenshots of the dashboard, sample output, and the PPT visuals (Impact & B
 
 ## 🧭 Credits
 
-Built during `Hackathon 2025` by the _**Daemon Mode**_ team.
+Built during `Hackathon 2025` by the _**Daemon Mode**_ team © 2025.
 
