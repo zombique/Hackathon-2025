@@ -44,7 +44,7 @@ business_sense_engine/
 
 ### Setup
 
-```
+```bash
 # From repo root
 cd business_sense_engine
 
