@@ -22,6 +22,13 @@ st.set_page_config(page_title="Business Sense Dashboard", layout="wide")
 
 st.title("🚨 Business Sense Engin Dashboard")
 
+# For displaying the table at full length:
+st.dataframe(
+    df, 
+    use_container_width=True,
+    height=min(600, (len(df) + 1) * 35 + 3)  # Cap height at 600px for very large tables
+)
+
 # -----------------------------
 # Sidebar Filters
 # -----------------------------
